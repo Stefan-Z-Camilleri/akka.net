@@ -182,9 +182,11 @@ namespace Akka.Persistence
         {
         }
 
+#if SERIALIZATION
         protected MaxUnconfirmedMessagesExceededException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
+#endif
     }
 
     #endregion

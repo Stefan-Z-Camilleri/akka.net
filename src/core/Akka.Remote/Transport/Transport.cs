@@ -75,6 +75,7 @@ namespace Akka.Remote.Transport
         {
         }
 
+#if SERIALIZATION
         /// <summary>
         /// Initializes a new instance of the <see cref="InvalidAssociationException"/> class.
         /// </summary>
@@ -84,6 +85,7 @@ namespace Akka.Remote.Transport
             : base(info, context)
         {
         }
+#endif
     }
 
     /// <summary>

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Akka.Actor;
@@ -902,10 +903,10 @@ namespace Akka.Remote
                             if (driverType == null)
                                 throw new TypeLoadException(string.Format("Cannot instantiate transport [{0}]. Cannot find the type.", transportSettings.TransportClass));
 
-                            if (!typeof(Transport.Transport).IsAssignableFrom(driverType))
+                            if (!typeof(Transport.Transport).GetTypeInfo().IsAssignableFrom(driverType))
                                 throw new TypeLoadException(string.Format("Cannot instantiate transport [{0}]. It does not implement [{1}].", transportSettings.TransportClass, typeof(Transport.Transport).FullName));
 
-                            var constructorInfo = driverType.GetConstructor(new[] { typeof(ActorSystem), typeof(Config) });
+                            var constructorInfo = driverType.GetTypeInfo().GetConstructor(new[] { typeof(ActorSystem), typeof(Config) });
                             if (constructorInfo == null)
                                 throw new TypeLoadException(string.Format("Cannot instantiate transport [{0}]. " +
                                                                           "It has no public constructor with " +

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Streams.Dsl.Internal;
@@ -134,7 +135,7 @@ namespace Akka.Streams.Dsl
         /// The <paramref name="combine"/> function is used to compose the materialized values of this flow and that
         /// flow into the materialized value of the resulting Flow.
         /// </summary>
-        IFlow<T, TMat3> IFlow<TOut, TMat>.ViaMaterialized<T, TMat2, TMat3>(IGraph<FlowShape<TOut, T>, TMat2> flow, Func<TMat, TMat2, TMat3> combine) 
+        IFlow<T, TMat3> IFlow<TOut, TMat>.ViaMaterialized<T, TMat2, TMat3>(IGraph<FlowShape<TOut, T>, TMat2> flow, Func<TMat, TMat2, TMat3> combine)
             => ViaMaterialized(flow, combine);
 
         /// <summary>
@@ -197,7 +198,7 @@ namespace Akka.Streams.Dsl
         /// function evaluation when the input stream ends, or completed with Failure
         /// if there is a failure signaled in the stream.
         /// </summary>
-        public Task<TOut2> RunAggregate<TOut2>(TOut2 zero, Func<TOut2, TOut, TOut2> aggregate, IMaterializer materializer) 
+        public Task<TOut2> RunAggregate<TOut2>(TOut2 zero, Func<TOut2, TOut, TOut2> aggregate, IMaterializer materializer)
             => RunWith(Sink.Aggregate(zero, aggregate), materializer);
 
         /// <summary>
@@ -323,14 +324,14 @@ namespace Akka.Streams.Dsl
         /// stream will see an individual flow of elements (always starting from the
         /// beginning) regardless of when they subscribed.
         /// </summary>
-        public static Source<T, NotUsed> From<T>(IEnumerable<T> enumerable) 
+        public static Source<T, NotUsed> From<T>(IEnumerable<T> enumerable)
             => Single(enumerable).SelectMany(x => x).WithAttributes(DefaultAttributes.EnumerableSource);
 
         /// <summary>
         /// Create a <see cref="Source{TOut,TMat}"/> with one element.
         /// Every connected <see cref="Sink{TIn,TMat}"/> of this stream will see an individual stream consisting of one element.
         /// </summary>
-        public static Source<T, NotUsed> Single<T>(T element) 
+        public static Source<T, NotUsed> Single<T>(T element)
             => FromGraph(new SingleSource<T>(element).WithAttributes(DefaultAttributes.SingleSource));
 
         /// <summary>
@@ -355,7 +356,7 @@ namespace Akka.Streams.Dsl
         /// element is produced it will not receive that tick element later. It will
         /// receive new tick elements as soon as it has requested more elements.
         /// </summary>
-        public static Source<T, ICancelable> Tick<T>(TimeSpan initialDelay, TimeSpan interval, T tick) 
+        public static Source<T, ICancelable> Tick<T>(TimeSpan initialDelay, TimeSpan interval, T tick)
             => FromGraph(new TickSource<T>(initialDelay, interval, tick)).WithAttributes(DefaultAttributes.TickSource);
 
         /// <summary>
@@ -380,7 +381,7 @@ namespace Akka.Streams.Dsl
         ///   }
         /// </code>
         /// </example>
-        public static Source<TElem, NotUsed> Unfold<TState, TElem>(TState state, Func<TState, Tuple<TState, TElem>> unfold) 
+        public static Source<TElem, NotUsed> Unfold<TState, TElem>(TState state, Func<TState, Tuple<TState, TElem>> unfold)
             => FromGraph(new Unfold<TState, TElem>(state, unfold)).WithAttributes(DefaultAttributes.Unfold);
 
         /// <summary>
@@ -398,7 +399,7 @@ namespace Akka.Streams.Dsl
         /// }
         /// </code>
         /// </example>
-        public static Source<TElem, NotUsed> UnfoldAsync<TState, TElem>(TState state, Func<TState, Task<Tuple<TState, TElem>>> unfoldAsync) 
+        public static Source<TElem, NotUsed> UnfoldAsync<TState, TElem>(TState state, Func<TState, Task<Tuple<TState, TElem>>> unfoldAsync)
             => FromGraph(new UnfoldAsync<TState, TElem>(state, unfoldAsync)).WithAttributes(DefaultAttributes.UnfoldAsync);
 
         /// <summary>

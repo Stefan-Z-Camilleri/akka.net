@@ -12,33 +12,33 @@ using System.Runtime.InteropServices;
 
 namespace Akka.Util
 {
-	internal static class MonotonicClock
-	{
-		private static readonly Stopwatch Stopwatch = Stopwatch.StartNew();
+    internal static class MonotonicClock
+    {
+        private static readonly Stopwatch Stopwatch = Stopwatch.StartNew();
 
-		[DllImport("kernel32")]
-		private static extern ulong GetTickCount64();
+        [DllImport("kernel32")]
+        private static extern ulong GetTickCount64();
 
-		private const int TicksInMillisecond = 10000;
+        private const int TicksInMillisecond = 10000;
 
         private const long NanosPerTick = 100;
 
-		public static TimeSpan Elapsed
-		{
-			get
-			{
-				return TimeSpan.FromTicks(GetTicks());
-			}
-		}
+        public static TimeSpan Elapsed
+        {
+            get
+            {
+                return TimeSpan.FromTicks(GetTicks());
+            }
+        }
 
         public static TimeSpan ElapsedHighRes
-		{
-			get { return Stopwatch.Elapsed; }
-		}
+        {
+            get { return Stopwatch.Elapsed; }
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-	    public static long GetMilliseconds()
-	    {
+        public static long GetMilliseconds()
+        {
             return RuntimeDetector.IsMono
                 ? Stopwatch.ElapsedMilliseconds
                 : (long)GetTickCount64();
@@ -46,15 +46,15 @@ namespace Akka.Util
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long GetNanos()
-	    {
-	        return GetTicks() * NanosPerTick;
-	    }
+        {
+            return GetTicks() * NanosPerTick;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-	    public static long GetTicks()
-	    {
-	        return GetMilliseconds() * TicksInMillisecond;
-	    }
+        public static long GetTicks()
+        {
+            return GetMilliseconds() * TicksInMillisecond;
+        }
 
         /// <summary>
         /// Ticks represent 100 nanos. https://msdn.microsoft.com/en-us/library/system.datetime.ticks(v=vs.110).aspx
@@ -63,7 +63,7 @@ namespace Akka.Util
         /// </summary>
         internal static long ToNanos(this long ticks)
         {
-            return ticks*NanosPerTick;
+            return ticks * NanosPerTick;
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Akka.Util
         /// </summary>
         internal static long ToTicks(this long nanos)
         {
-            return nanos/NanosPerTick;
+            return nanos / NanosPerTick;
         }
-	}
+    }
 }

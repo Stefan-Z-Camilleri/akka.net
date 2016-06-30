@@ -12,7 +12,7 @@ using Xunit;
 
 namespace Akka.Tests.IO
 {
-
+#if !CORECLR
     public class SimpleDnsCacheSpec
     {
         private class SimpleDnsCacheTestDouble : SimpleDnsCache
@@ -172,4 +172,5 @@ namespace Akka.Tests.IO
             #endregion
         }
     }
+#endif
 }

@@ -243,11 +243,13 @@ namespace Akka.Streams.Tests.Implementation
         [Fact(Skip = "We can't catch a StackOverflowException")]
         public void StreamLayout_should_fail_fusing_when_value_computation_is_too_complex()
         {
+#if !CORECLR
             // this tests that the canary in to coal mine actually works
             var g = Enumerable.Range(1, TooDeepForStack)
                 .Aggregate(Flow.Create<int>().MapMaterializedValue(_ => 1),
                     (flow, i) => flow.MapMaterializedValue(x => x + i));
             g.Invoking(flow => Streams.Fusing.Aggressive(flow)).ShouldThrow<StackOverflowException>();
+#endif
         }
 
         [Fact]

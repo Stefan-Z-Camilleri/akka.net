@@ -14,6 +14,7 @@ using Akka.Configuration;
 using Akka.Event;
 using Akka.Persistence.Journal;
 using Akka.Util.Internal;
+using System.Reflection;
 
 namespace Akka.Persistence
 {

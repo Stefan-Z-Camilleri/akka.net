@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using Akka.Pattern;
 using Akka.Streams.Dsl;
@@ -1456,10 +1457,11 @@ namespace Akka.Streams.Implementation
             {
             }
 
-            protected MaterializationPanicException(SerializationInfo info, StreamingContext context)
-                : base(info, context)
+#if SERIALIZATION
+            protected MaterializationPanicException(SerializationInfo info, StreamingContext context) : base(info, context)
             {
             }
+#endif
         }
 
         protected readonly IModule TopLevel;
@@ -1626,7 +1628,7 @@ namespace Akka.Streams.Implementation
         {
             var materializedValues = new Dictionary<IModule, object>();
 
-            if(IsDebug)
+            if (IsDebug)
                 Console.WriteLine($"entering module {module.GetHashCode()}%08x] ({module.GetType().Name})");
 
             foreach (var submodule in module.SubModules)
@@ -1643,9 +1645,9 @@ namespace Akka.Streams.Implementation
                     materializedValues.Add(copied, MaterializeModule(copied, subEffectiveAttributes));
                     ExitScope(copied);
                 }
-                else if(submodule is CompositeModule || submodule is FusedModule)
+                else if (submodule is CompositeModule || submodule is FusedModule)
                     materializedValues.Add(submodule, MaterializeComposite(submodule, subEffectiveAttributes));
-                
+
                 //EmptyModule, nothing to do or say
             }
 
@@ -1660,11 +1662,11 @@ namespace Akka.Streams.Implementation
             while (MaterializedValueSource.Count != 0)
             {
                 var node = MaterializedValueSource.Keys.First();
-                if(IsDebug)
+                if (IsDebug)
                     Console.WriteLine($"  delayed computation of {node}");
                 ResolveMaterialized(node, materializedValues, 4);
             }
-            if(IsDebug)
+            if (IsDebug)
                 Console.WriteLine($"exiting module [{module.GetHashCode()}%08x]");
             return resolved;
         }

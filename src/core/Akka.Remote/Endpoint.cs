@@ -162,10 +162,12 @@ namespace Akka.Remote
     {
         public EndpointException(string msg, Exception cause = null) : base(msg, cause) { }
 
+#if SERIALIZATION
         protected EndpointException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
+#endif
     }
 
     /// <summary>

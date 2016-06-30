@@ -15,6 +15,7 @@ using Akka.Event;
 using Akka.Serialization;
 using Akka.Util;
 using Assert = System.Diagnostics.Debug;
+using System.Reflection;
 
 namespace Akka.Actor
 {

@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Actor.Internal;
 using Akka.Configuration;
+using System.Reflection;
 
 namespace Akka.Event
 {

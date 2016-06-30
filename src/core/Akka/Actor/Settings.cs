@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using Akka.Configuration;
 using Akka.Dispatch;
 using Akka.Routing;
+using System.Reflection;
 
 namespace Akka.Actor
 {

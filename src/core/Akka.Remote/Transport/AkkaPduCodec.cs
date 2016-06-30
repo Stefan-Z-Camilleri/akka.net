@@ -20,10 +20,12 @@ namespace Akka.Remote.Transport
     {
         public PduCodecException(string msg, Exception cause = null) : base(msg, cause) { }
 
+#if SERIALIZATION
         protected PduCodecException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
+#endif
     }
 
     /*

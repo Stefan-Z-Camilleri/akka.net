@@ -197,9 +197,11 @@ namespace Akka.Cluster.Tools.Singleton
     {
         public ClusterSingletonManagerIsStuck(string message) : base(message) { }
 
+#if SERIALIZATION
         public ClusterSingletonManagerIsStuck(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
+#endif
     }
 
     /// <summary>

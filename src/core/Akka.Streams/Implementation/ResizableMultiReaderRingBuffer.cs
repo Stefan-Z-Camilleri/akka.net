@@ -22,10 +22,12 @@ namespace Akka.Streams.Implementation
         {
         }
 
+#if SERIALIZATION
         protected NothingToReadException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }
+#endif
     }
 
     public interface ICursors

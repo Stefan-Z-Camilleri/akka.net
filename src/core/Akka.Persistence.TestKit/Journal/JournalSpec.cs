@@ -129,6 +129,7 @@ namespace Akka.Persistence.TestKit.Journal
             return messages;
         }
 
+#if !CORECLR
         /// <summary>
         /// JSON serializer should fail on this
         /// </summary>
@@ -141,6 +142,7 @@ namespace Akka.Persistence.TestKit.Journal
                 throw new NotImplementedException();
             }
         }
+#endif
 
         [Fact]
         public void Journal_should_replay_all_messages()
@@ -275,6 +277,7 @@ namespace Akka.Persistence.TestKit.Journal
             _receiverProbe.ExpectMsg<RecoverySuccess>(m => m.HighestSequenceNr == 5L);
         }
 
+#if !CORECLR
         [Fact]
         public void Journal_optionally_may_reject_non_serializable_events()
         {
@@ -308,6 +311,7 @@ namespace Akka.Persistence.TestKit.Journal
                                                       m.Persistent.WriterGuid.Equals(writerGuid) &&
                                                       m.Persistent.Payload.Equals("b-8"));
         }
+#endif
     }
 }
 

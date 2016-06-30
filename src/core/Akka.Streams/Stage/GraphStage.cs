@@ -1661,7 +1661,9 @@ namespace Akka.Streams.Stage
     {
         public static readonly StageActorRefNotInitializedException Instance = new StageActorRefNotInitializedException();
         private StageActorRefNotInitializedException() : base("You must first call getStageActorRef, to initialize the Actors behaviour") { }
+#if SERIALIZATION
         protected StageActorRefNotInitializedException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+#endif
     }
 
     /// <summary>

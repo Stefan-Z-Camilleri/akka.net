@@ -152,10 +152,12 @@ namespace Akka.Streams
             Actor = actor;
         }
 
+#if SERIALIZATION
         protected AbruptTerminationException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             Actor = (IActorRef)info.GetValue("Actor", typeof(IActorRef));
         }
+#endif
     }
 
     /// <summary>
@@ -165,7 +167,9 @@ namespace Akka.Streams
     {
         public MaterializationException(string message, Exception innerException) : base(message, innerException) { }
 
+#if SERIALIZATION
         protected MaterializationException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+#endif
     }
 
     /// <summary>

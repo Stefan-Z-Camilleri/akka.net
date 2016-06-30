@@ -95,8 +95,10 @@ namespace Akka.Streams
         {
         }
 
+#if SERIALIZATION
         protected BufferOverflowException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
+#endif
     }
 }

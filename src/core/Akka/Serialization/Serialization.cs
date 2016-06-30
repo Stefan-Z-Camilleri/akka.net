@@ -11,6 +11,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using Akka.Actor;
 using Akka.Util.Internal;
+using System.Reflection;
 
 namespace Akka.Serialization
 {

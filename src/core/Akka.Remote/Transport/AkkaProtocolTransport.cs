@@ -48,6 +48,7 @@ namespace Akka.Remote.Transport
         /// <param name="cause">The exception that is the cause of the current exception.</param>
         public AkkaProtocolException(string message, Exception cause = null) : base(message, cause) { }
 
+#if SERIALIZATION
         /// <summary>
         /// Initializes a new instance of the <see cref="AkkaProtocolException"/> class.
         /// </summary>
@@ -57,6 +58,7 @@ namespace Akka.Remote.Transport
             : base(info, context)
         {
         }
+#endif
     }
 
     /// <summary>

@@ -15,6 +15,7 @@ using Xunit;
 
 namespace Akka.Tests.IO
 {
+#if !CORECLR
     public class UdpConnectedIntegrationSpec : AkkaSpec
     {
         private readonly IPEndPoint[] _addresses;
@@ -102,4 +103,5 @@ namespace Akka.Tests.IO
             ExpectMsg<UdpConnected.Received>(x => x.Data.ShouldBe(data2));
         }
     }
+#endif
 }

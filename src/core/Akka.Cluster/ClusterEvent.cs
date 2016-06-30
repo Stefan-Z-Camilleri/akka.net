@@ -13,6 +13,7 @@ using Akka.Actor;
 using Akka.Dispatch;
 using Akka.Event;
 using Akka.Util.Internal;
+using System.Reflection;
 
 namespace Akka.Cluster
 {
@@ -769,7 +770,7 @@ namespace Akka.Cluster
                 Action<object> pub = @event =>
                 {
                     var eventType = @event.GetType();
-                    if (to.Any(o => o.IsAssignableFrom(eventType)))
+                    if (to.Any(o => o.GetTypeInfo().IsAssignableFrom(eventType)))
                         subscriber.Tell(@event);
                 };
                 PublishDiff(Gossip.Empty, _latestGossip, pub);

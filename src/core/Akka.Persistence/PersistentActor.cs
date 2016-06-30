@@ -91,9 +91,11 @@ namespace Akka.Persistence
         {
         }
 
+#if SERIALIZATION
         public RecoveryTimedOutException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
+#endif
     }
 
     /// <summary>

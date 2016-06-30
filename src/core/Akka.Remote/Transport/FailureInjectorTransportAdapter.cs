@@ -42,6 +42,7 @@ namespace Akka.Remote.Transport
             Msg = msg;
         }
 
+#if SERIALIZATION
         /// <summary>
         /// Initializes a new instance of the <see cref="FailureInjectorException"/> class.
         /// </summary>
@@ -51,6 +52,7 @@ namespace Akka.Remote.Transport
             : base(info, context)
         {
         }
+#endif
 
         /// <summary>
         /// Retrieves the message of the simulated failure.

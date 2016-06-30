@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Akka.Actor;
@@ -140,7 +141,7 @@ namespace Akka.Cluster
         {
             if (to.Length == 0)
                 throw new ArgumentException("At least one `IClusterDomainEvent` class is required");
-            if (!to.All(t => typeof(ClusterEvent.IClusterDomainEvent).IsAssignableFrom(t)))
+            if (!to.All(t => typeof(ClusterEvent.IClusterDomainEvent).GetTypeInfo().IsAssignableFrom(t)))
                 throw new ArgumentException($"Subscribe to `IClusterDomainEvent` or subclasses, was [{string.Join(", ", to.Select(c => c.Name))}]");
 
             ClusterCore.Tell(new InternalClusterAction.Subscribe(subscriber, initialStateMode, ImmutableHashSet.Create(to)));

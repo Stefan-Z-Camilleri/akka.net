@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using Akka.Actor;
 using Akka.Event;
@@ -64,7 +65,10 @@ namespace Akka.Streams.Implementation
     public class NormalShutdownException : IllegalStateException
     {
         public NormalShutdownException(string message) : base(message) { }
+
+#if SERIALIZATION
         protected NormalShutdownException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+#endif
     }
 
     public interface IActorPublisher : IUntypedPublisher
