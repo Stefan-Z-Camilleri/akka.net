@@ -232,6 +232,8 @@
     <Compile Include="Event\LogMessage.cs" />
     <Compile Include="Event\StandardOutLogger.cs" />
     <Compile Include="Helios.Concurrency.DedicatedThreadPool.cs" />
+    <Compile Include="Pattern\BackoffOnRestartSupervisor.cs" />
+    <Compile Include="Pattern\BackoffOptions.cs" />
     <Compile Include="Pattern\BackoffSupervisor.cs" />
     <Compile Include="IO\DatagramChannel.cs" />
     <Compile Include="IO\Dns.cs" />

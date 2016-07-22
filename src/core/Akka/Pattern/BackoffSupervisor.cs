@@ -22,7 +22,7 @@ namespace Akka.Pattern
         #region Messages
 
         /// <summary>
-        /// Request <see cref="BackoffSupervisor"/> with this message to receive <see cref="CurrentChild"/> response with current child.
+        /// Send this message to the <see cref="BackoffSupervisor"/> and it will reply with <see cref="CurrentChild"/> containing the `ActorRef` of the current child, if any.
         /// </summary>
         [Serializable]
         public sealed class GetCurrentChild
@@ -31,17 +31,54 @@ namespace Akka.Pattern
             private GetCurrentChild() { }
         }
 
+        /// <summary>
+        /// Send this message to the <see cref="BackoffSupervisor"/> and it will reply with <see cref="CurrentChild"/> containing the `ActorRef` of the current child, if any.
+        /// </summary>
         [Serializable]
         public sealed class CurrentChild
         {
-            public readonly IActorRef Ref;
-
             public CurrentChild(IActorRef @ref)
             {
                 Ref = @ref;
             }
+
+            public IActorRef Ref { get; }
         }
 
+        /// <summary>
+        /// Send this message to the <see cref="BackoffSupervisor"/> and it will reset the back-off. This should be used in conjunction with `withManualReset` in <see cref="BackoffOptionsImpl"/>.
+        /// </summary>
+        [Serializable]
+        public sealed class Reset
+        {
+            public static readonly Reset Instance = new Reset();
+            private Reset() { }
+        }
+
+        /// <summary>
+        /// Send this message to the <see cref="BackoffSupervisor"/> and it will reply with <see cref="BackoffSupervisor.RestartCount"/> containing the current restart count.
+        /// </summary>
+        [Serializable]
+        public sealed class GetRestartCount
+        {
+            public static readonly GetRestartCount Instance = new GetRestartCount();
+            private GetRestartCount() { }
+        }
+
+        [Serializable]
+        public sealed class RestartCount
+        {
+            public RestartCount(int count)
+            {
+                Count = count;
+            }
+
+            public int Count { get; }
+        }
+
+        /// <summary>
+        /// TODO: should implement IDeadLetterSupression
+        /// </summary>
         [Serializable]
         public sealed class StartChild : IDeadLetterSuppression
         {
@@ -49,15 +86,18 @@ namespace Akka.Pattern
             private StartChild() { }
         }
 
+        /// <summary>
+        /// TODO: should implement IDeadLetterSupression
+        /// </summary>
         [Serializable]
         public sealed class ResetRestartCount : IDeadLetterSuppression
         {
-            public readonly int Current;
-
             public ResetRestartCount(int current)
             {
                 Current = current;
             }
+
+            public int Current { get; }
         }
 
         #endregion
@@ -66,12 +106,41 @@ namespace Akka.Pattern
         private readonly string _childName;
         private readonly TimeSpan _minBackoff;
         private readonly TimeSpan _maxBackoff;
+        private readonly IBackoffReset _reset;
         private readonly double _randomFactor;
-
+        private readonly SupervisorStrategy _strategy;
         private int _restartCount = 0;
         private IActorRef _child = null;
 
-        public BackoffSupervisor(Props childProps, string childName, TimeSpan minBackoff, TimeSpan maxBackoff, double randomFactor)
+        public BackoffSupervisor(
+            Props childProps,
+            string childName,
+            TimeSpan minBackoff,
+            TimeSpan maxBackoff,
+            double randomFactor)
+            : this(childProps, childName, minBackoff, maxBackoff, new AutoReset(minBackoff), randomFactor, Actor.SupervisorStrategy.DefaultStrategy)
+        {
+        }
+
+        public BackoffSupervisor(
+            Props childProps,
+            string childName,
+            TimeSpan minBackoff,
+            TimeSpan maxBackoff,
+            double randomFactor,
+            SupervisorStrategy strategy)
+            : this(childProps, childName, minBackoff, maxBackoff, new AutoReset(minBackoff), randomFactor, strategy)
+        {
+        }
+
+        public BackoffSupervisor(
+            Props childProps,
+            string childName,
+            TimeSpan minBackoff,
+            TimeSpan maxBackoff,
+            IBackoffReset reset,
+            double randomFactor,
+            SupervisorStrategy strategy)
         {
             if (minBackoff <= TimeSpan.Zero) throw new ArgumentException("MinBackoff must be greater than 0");
             if (maxBackoff < minBackoff) throw new ArgumentException("MaxBackoff must be greater than MinBackoff");
@@ -81,7 +150,29 @@ namespace Akka.Pattern
             _childName = childName;
             _minBackoff = minBackoff;
             _maxBackoff = maxBackoff;
+            _reset = reset;
             _randomFactor = randomFactor;
+            _strategy = strategy;
+        }
+
+        protected override SupervisorStrategy SupervisorStrategy()
+        {
+            var oneForOne = _strategy as OneForOneStrategy;
+            if (oneForOne != null)
+            {
+                return new OneForOneStrategy(
+                    oneForOne.MaxNumberOfRetries,
+                    oneForOne.WithinTimeRangeMilliseconds,
+                    ex =>
+                    {
+                        // TODO: fix here
+                        return oneForOne.Decider.Decide(ex);
+                    });
+            }
+            else
+            {
+                return _strategy;
+            }
         }
 
         protected override void PreStart()
@@ -98,17 +189,7 @@ namespace Akka.Pattern
                 if (_child != null && _child.Equals(terminated.ActorRef))
                 {
                     _child = null;
-                    var rand = 1.0 + ThreadLocalRandom.Current.NextDouble() * _randomFactor;
-                    TimeSpan restartDelay;
-                    if (_restartCount >= 30)
-                        restartDelay = _maxBackoff; // duration overflow protection (> 100 years)
-                    else
-                    {
-                        var max = Math.Min(_maxBackoff.Ticks, _minBackoff.Ticks * Math.Pow(2, _restartCount)) * rand;
-                        if (max >= Double.MaxValue) restartDelay = _maxBackoff;
-                        else restartDelay = new TimeSpan((long)max);
-                    }
-
+                    var restartDelay = CalculateDelay(_restartCount, _minBackoff, _maxBackoff, _randomFactor);
                     Context.System.Scheduler.ScheduleTellOnce(restartDelay, Self, StartChild.Instance, Self);
                     _restartCount++;
                 }
@@ -117,12 +198,31 @@ namespace Akka.Pattern
             else if (message is StartChild)
             {
                 StartChildActor();
-                Context.System.Scheduler.ScheduleTellOnce(_minBackoff, Self, new ResetRestartCount(_restartCount), Self);
+                var backoffReset = _reset as AutoReset;
+                if (backoffReset != null)
+                {
+                    Context.System.Scheduler.ScheduleTellOnce(backoffReset.ResetBackoff, Self, new ResetRestartCount(_restartCount), Self);
+                }
+            }
+            else if (message is Reset)
+            {
+                if (_reset is ManualReset)
+                {
+                    _restartCount = 0;
+                }
+                else
+                {
+                    Unhandled(message);
+                }
             }
             else if (message is ResetRestartCount)
             {
                 var restartCount = (ResetRestartCount)message;
                 if (restartCount.Current == _restartCount) _restartCount = 0;
+            }
+            else if (message is GetRestartCount)
+            {
+                Sender.Tell(new RestartCount(_restartCount));
             }
             else if (message is GetCurrentChild)
             {
@@ -130,14 +230,100 @@ namespace Akka.Pattern
             }
             else
             {
-                if (_child != null) _child.Forward(message);
-                else Context.System.DeadLetters.Forward(message);
+                if (_child.Equals(Sender))
+                {
+                    // use the BackoffSupervisor as sender
+                    Context.Parent.Tell(message);
+                }
+                else
+                {
+                    if (_child != null) _child.Forward(message);
+                    else Context.System.DeadLetters.Forward(message);
+                }
             }
         }
 
         private void StartChildActor()
         {
-            if (_child == null) _child = Context.Watch(Context.ActorOf(_childProps, _childName));
+            if (_child == null)
+            {
+                _child = Context.Watch(Context.ActorOf(_childProps, _childName));
+            }
+        }
+
+        /// <summary>
+        /// Props for creating a <see cref="BackoffSupervisor"/> actor.
+        /// </summary>
+        /// <param name="childProps">The <see cref="Akka.Actor.Props"/> of the child actor that will be started and supervised</param>
+        /// <param name="childName">Name of the child actor</param>
+        /// <param name="minBackoff">Minimum (initial) duration until the child actor will started again, if it is terminated</param>
+        /// <param name="maxBackoff">The exponential back-off is capped to this duration</param>
+        /// <param name="randomFactor">After calculation of the exponential back-off an additional random delay based on this factor is added, e.g. `0.2` adds up to `20%` delay. In order to skip this additional delay pass in `0`.</param>
+        public static Props Props(
+            Props childProps,
+            string childName,
+            TimeSpan minBackoff,
+            TimeSpan maxBackoff,
+            double randomFactor)
+        {
+            return PropsWithSupervisorStrategy(childProps, childName, minBackoff, maxBackoff, randomFactor,
+                Actor.SupervisorStrategy.DefaultStrategy);
+        }
+
+        /// <summary>
+        /// Props for creating a <see cref="BackoffSupervisor"/> actor from <see cref="BackoffOptionsImpl"/>.
+        /// </summary>
+        /// <param name="options">The <see cref="BackoffOptionsImpl"/> that specify how to construct a backoff-supervisor.</param>
+        /// <returns></returns>
+        public static Props Props(BackoffOptions options)
+        {
+            return options.Props;
+        }
+
+        /// <summary>
+        /// Props for creating a <see cref="BackoffSupervisor"/> actor with a custom supervision strategy.
+        /// </summary>
+        /// <param name="childProps">The <see cref="Akka.Actor.Props"/> of the child actor that will be started and supervised</param>
+        /// <param name="childName">Name of the child actor</param>
+        /// <param name="minBackoff">Minimum (initial) duration until the child actor will started again, if it is terminated</param>
+        /// <param name="maxBackoff">The exponential back-off is capped to this duration</param>
+        /// <param name="randomFactor">After calculation of the exponential back-off an additional random delay based on this factor is added, e.g. `0.2` adds up to `20%` delay. In order to skip this additional delay pass in `0`.</param>
+        /// <param name="strategy">The supervision strategy to use for handling exceptions in the child</param>
+        public static Props PropsWithSupervisorStrategy(
+            Props childProps,
+            string childName,
+            TimeSpan minBackoff,
+            TimeSpan maxBackoff,
+            double randomFactor,
+            SupervisorStrategy strategy)
+        {
+             return Actor.Props.Create(
+                () => new BackoffSupervisor(childProps, childName, minBackoff, maxBackoff, randomFactor, strategy));
+        }
+
+        internal static TimeSpan CalculateDelay(
+            int restartCount,
+            TimeSpan minBackoff,
+            TimeSpan maxBackoff,
+            double randomFactor)
+        {
+            var rand = 1.0 + ThreadLocalRandom.Current.NextDouble() * randomFactor;
+            if (restartCount >= 30)
+            {
+                return maxBackoff; // duration overflow protection (> 100 years)
+            }
+            else
+            {
+                var max = Math.Min(maxBackoff.Ticks, minBackoff.Ticks * Math.Pow(2, restartCount)) * rand;
+                if (max >= double.MaxValue)
+                {
+                    return maxBackoff;
+                }
+                else
+                {
+                    return new TimeSpan((long)max);
+                }
+            }
         }
     }
 }
