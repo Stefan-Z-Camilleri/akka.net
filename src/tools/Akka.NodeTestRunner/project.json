@@ -1,0 +1,16 @@
+{
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "Akka": { "target": "project" },
+    "Akka.Remote.TestKit": { "target": "project" },
+    "xunit.abstractions": "2.0.0",
+    "xunit.runner.utility": "2.1.0"
+  },
+
+  "frameworks": {
+    "net45": {}
+  }
+}

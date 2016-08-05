@@ -1,0 +1,19 @@
+{
+  "testRunner": "xunit",
+
+  "dependencies": {
+    "Akka": { "target": "project" },
+    "Akka.TestKit": { "target": "project" },
+    "Akka.NodeTestRunner": { "target": "project" },
+    "Akka.MultiNodeTestRunner.Shared": { "target": "project" },
+    "Akka.TestKit.Xunit2": { "target": "project" },
+    "Akka.Tests.Shared.Internals": { "target": "project" },
+    "xunit": "2.2.0-beta2-build3300",
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
+    "faker-csharp": "1.2.0"
+  },
+
+  "frameworks": {
+    "net451": {}
+  }
+}

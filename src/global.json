@@ -1,9 +1,10 @@
-﻿{
+{
   "projects": [
     "core",
     "contrib/cluster",
     "contrib/persistence",
-    "contrib/testkits"
+    "contrib/testkits",
+    "tools"
   ],
   "sdk": {
     "version": "1.0.0-preview2-003121"
