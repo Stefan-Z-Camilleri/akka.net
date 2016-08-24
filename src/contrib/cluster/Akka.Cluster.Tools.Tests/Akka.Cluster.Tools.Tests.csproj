@@ -86,6 +86,7 @@
     <Compile Include="PublishSubscribe\DistributedPubSubMessageSerializerSpec.cs" />
     <Compile Include="Singleton\ClusterSingletonConfigSpec.cs" />
     <Compile Include="Singleton\ClusterSingletonMessageSerializerSpec.cs" />
+    <Compile Include="Singleton\ClusterSingletonRestartSpec.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

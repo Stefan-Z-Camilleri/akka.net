@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Dispatch;
 using Akka.Event;
+using Akka.Pattern;
 using Akka.Remote;
 using Akka.Util;
 using Akka.Util.Internal;
@@ -1120,7 +1121,15 @@ namespace Akka.Cluster
                     _log.Info("New incarnation of existing member [{0}] is trying to join. " +
                         "Existing will be removed from the cluster and then new member will be allowed to join.", node);
                     if (localMember.Status != MemberStatus.Down)
+                    {
+                        // we can confirm it as terminated/unreachable immediately
+                        var newReachability = _latestGossip.Overview.Reachability.Terminated(SelfUniqueAddress, localMember.UniqueAddress);
+                        var newOverview = _latestGossip.Overview.Copy(reachability: newReachability);
+                        var newGossip = _latestGossip.Copy(overview: newOverview);
+                        UpdateLatestGossip(newGossip);
+
                         Downing(localMember.Address);
+                    }
                 }
                 else
                 {
@@ -2155,15 +2164,14 @@ namespace Akka.Cluster
     internal class OnMemberStatusChangedListener : ReceiveActor
     {
         private readonly Action _callback;
+        private readonly MemberStatus _status;
         private readonly ILoggingAdapter _log = Context.GetLogger();
         private readonly Cluster _cluster;
-        private readonly MemberStatus _targetStatus;
 
-
-        public OnMemberStatusChangedListener(Action callback, MemberStatus targetStatus)
+        public OnMemberStatusChangedListener(Action callback, MemberStatus status)
         {
-            _targetStatus = targetStatus;
             _callback = callback;
+            _status = status;
             _cluster = Cluster.Get(Context.System);
 
             Receive<ClusterEvent.CurrentClusterState>(state =>
@@ -2187,16 +2195,25 @@ namespace Akka.Cluster
 
         protected override void PreStart()
         {
-            var type = _targetStatus == MemberStatus.Up
-                ? typeof(ClusterEvent.MemberUp)
-                : typeof(ClusterEvent.MemberRemoved);
+            Type to;
+            switch (_status)
+            {
+                case MemberStatus.Up:
+                    to = typeof(ClusterEvent.MemberUp);
+                    break;
+                case MemberStatus.Removed:
+                    to = typeof(ClusterEvent.MemberRemoved);
+                    break;
+                default:
+                    throw new IllegalStateException($"Expected Up or Removed in OnMemberStatusChangedListener, got [{_status}]");
+            }
 
-            _cluster.Subscribe(Self, new[] { type });
+            _cluster.Subscribe(Self, to);
         }
 
         protected override void PostStop()
         {
-            if (_targetStatus == MemberStatus.Removed)
+            if (_status == MemberStatus.Removed)
                 Done();
             _cluster.Unsubscribe(Self);
         }
@@ -2209,7 +2226,7 @@ namespace Akka.Cluster
             }
             catch (Exception ex)
             {
-                _log.Error(ex, "[{0}] callback failed with [{1}]", _targetStatus, ex.Message);
+                _log.Error(ex, "[{0}] callback failed with [{1}]", _status, ex.Message);
             }
             finally
             {
@@ -2219,7 +2236,7 @@ namespace Akka.Cluster
 
         private bool IsTriggered(Member m)
         {
-            return m.UniqueAddress == _cluster.SelfUniqueAddress && m.Status == _targetStatus;
+            return m.UniqueAddress == _cluster.SelfUniqueAddress && m.Status == _status;
         }
     }
 

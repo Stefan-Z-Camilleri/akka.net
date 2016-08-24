@@ -35,10 +35,10 @@ namespace Akka.Cluster.Tools.Singleton
         [Serializable]
         public sealed class InitialOldestState
         {
-            public readonly Address Oldest;
+            public readonly UniqueAddress Oldest;
             public readonly bool SafeToBeOldest;
 
-            public InitialOldestState(Address oldest, bool safeToBeOldest)
+            public InitialOldestState(UniqueAddress oldest, bool safeToBeOldest)
             {
                 Oldest = oldest;
                 SafeToBeOldest = safeToBeOldest;
@@ -48,9 +48,9 @@ namespace Akka.Cluster.Tools.Singleton
         [Serializable]
         public sealed class OldestChanged
         {
-            public readonly Address Oldest;
+            public readonly UniqueAddress Oldest;
 
-            public OldestChanged(Address oldest)
+            public OldestChanged(UniqueAddress oldest)
             {
                 Oldest = oldest;
             }
@@ -77,17 +77,12 @@ namespace Akka.Cluster.Tools.Singleton
 
             // todo: fix neq comparison
             if (!Equals(before, after))
-                _changes = _changes.Enqueue(new OldestChanged(MemberAddressOrDefault(after)));
+                _changes = _changes.Enqueue(new OldestChanged(after?.UniqueAddress));
         }
 
         private bool MatchingRole(Member member)
         {
             return string.IsNullOrEmpty(_role) || member.HasRole(_role);
-        }
-
-        private Address MemberAddressOrDefault(Member member)
-        {
-            return (member == null) ? null : member.Address;
         }
 
         private void HandleInitial(ClusterEvent.CurrentClusterState state)
@@ -97,7 +92,7 @@ namespace Akka.Cluster.Tools.Singleton
                 .ToImmutableSortedSet(MemberAgeOrdering.Descending);
 
             var safeToBeOldest = !state.Members.Any(m => m.Status == MemberStatus.Down || m.Status == MemberStatus.Exiting);
-            var initial = new InitialOldestState(MemberAddressOrDefault(_membersByAge.FirstOrDefault()), safeToBeOldest);
+            var initial = new InitialOldestState(_membersByAge.FirstOrDefault()?.UniqueAddress, safeToBeOldest);
             _changes = _changes.Enqueue(initial);
         }
 
