@@ -1,6 +1,5 @@
 ﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
-  
   <PropertyGroup>
     <TargetFramework>net46</TargetFramework>
     <AssemblyName>Akka.Persistence.Sqlite.Tests</AssemblyName>
@@ -13,13 +12,11 @@
     <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="**\*.cs" />
     <EmbeddedResource Include="**\*.resx" />
     <EmbeddedResource Include="compiler\resources\**\*" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\..\core\Akka\Akka.csproj" />
     <ProjectReference Include="..\..\..\core\Akka.Persistence\Akka.Persistence.csproj" />
@@ -27,14 +24,12 @@
     <ProjectReference Include="..\Akka.Persistence.Query.Sql\Akka.Persistence.Query.Sql.csproj" />
     <ProjectReference Include="..\Akka.Persistence.Sql.Common\Akka.Persistence.Sql.Common.csproj" />
     <ProjectReference Include="..\Akka.Persistence.Sql.TestKit\Akka.Persistence.Sql.TestKit.csproj" />
-    <ProjectReference Include="..\Akka.Persistence.Sqlite\Akka.Persistence.Sqlite.csproj" />
     <ProjectReference Include="..\..\..\core\Akka.Persistence.TestKit\Akka.Persistence.TestKit.csproj" />
     <ProjectReference Include="..\..\..\core\Akka.Streams\Akka.Streams.csproj" />
     <ProjectReference Include="..\..\..\core\Akka.Streams.TestKit\Akka.Streams.TestKit.csproj" />
     <ProjectReference Include="..\..\..\core\Akka.TestKit\Akka.TestKit.csproj" />
     <ProjectReference Include="..\..\testkits\Akka.TestKit.Xunit2\Akka.TestKit.Xunit2.csproj" />
   </ItemGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
     <Reference Include="System.Configuration">
       <FromP2P>true</FromP2P>
@@ -46,7 +41,6 @@
       <FromP2P>true</FromP2P>
     </Reference>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Sdk">
       <Version>1.0.0-alpha-20161104-2</Version>
@@ -65,15 +59,12 @@
       <Version>2.2.0-beta4-build3444</Version>
     </PackageReference>
   </ItemGroup>
-
   <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
   </PropertyGroup>
-  
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

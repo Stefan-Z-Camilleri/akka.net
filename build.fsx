@@ -328,7 +328,7 @@ Target "NBench" <| fun _ ->
         sprintf "src/**/bin/Release/*%s*.Tests.Performance.dll" assemblyFilter
 
     mkdir perfOutput
-    let nbenchTestPath = findToolInSubPath "NBench.Runner.exe" "src/packges/NBench.Runner*"
+    let nbenchTestPath = findToolInSubPath "NBench.Runner.exe" "src/packages/NBench.Runner*"
     let nbenchTestAssemblies = !! testSearchPath
     printfn "Using NBench.Runner: %s" nbenchTestPath
 
