@@ -24,6 +24,5 @@ before_install:
   - sudo apt-get update
   - sudo apt-get -y install dotnet-dev-1.0.0-preview4-004107
 
-script:
- - sh ./build.sh Build
+script: ./build.sh Build
  
