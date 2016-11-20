@@ -23,11 +23,11 @@ namespace PersistenceExample
                 //SqlServerPersistence.Init(system);
                 BasicUsage(system);
 
-                //FailingActorExample(system);
+                FailingActorExample(system);
 
-                //SnapshotedActor(system);
+                SnapshotedActor(system);
 
-                //ViewExample(system);
+                ViewExample(system);
 
                 AtLeastOnceDelivery(system);
 
