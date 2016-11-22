@@ -22,8 +22,8 @@ namespace Akka.IO
         public InetAddressDnsResolver(SimpleDnsCache cache, Config config)
         {
             _cache = cache;
-            _positiveTtl = (long) config.GetTimeSpan("positive-ttl").TotalMilliseconds;
-            _negativeTtl = (long) config.GetTimeSpan("negative-ttl").TotalMilliseconds;
+            _positiveTtl = (long)config.GetTimeSpan("positive-ttl").TotalMilliseconds;
+            _negativeTtl = (long)config.GetTimeSpan("negative-ttl").TotalMilliseconds;
         }
 
         protected override bool Receive(object message)
@@ -36,7 +36,7 @@ namespace Akka.IO
                 {
                     try
                     {
-                        //TODO: IP6
+                        // TODO: IP6
                         answer = Dns.Resolved.Create(resolve.Name, System.Net.Dns.GetHostEntryAsync(resolve.Name).Result.AddressList.Where(x => x.AddressFamily == AddressFamily.InterNetwork));
                         _cache.Put(answer, _positiveTtl);
                     }

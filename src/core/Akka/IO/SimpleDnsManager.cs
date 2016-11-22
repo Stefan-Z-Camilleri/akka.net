@@ -16,8 +16,8 @@ namespace Akka.IO
         private readonly DnsExt _ext;
         private readonly ILoggingAdapter _log = Context.GetLogger();
         private readonly IActorRef _resolver;
-        private IPeriodicCacheCleanup _cacheCleanup;
-        private ICancelable _cleanupTimer;
+        private readonly IPeriodicCacheCleanup _cacheCleanup;
+        private readonly ICancelable _cleanupTimer;
 
         public SimpleDnsManager(DnsExt ext)
         {
@@ -45,8 +45,7 @@ namespace Akka.IO
             }
             if (message is CacheCleanup)
             {
-                if (_cacheCleanup != null)
-                    _cacheCleanup.CleanUp();
+                _cacheCleanup?.CleanUp();
                 return true;
             }
             return false;
@@ -54,13 +53,16 @@ namespace Akka.IO
 
         protected override void PostStop()
         {
-            if (_cleanupTimer != null)
-                _cleanupTimer.Cancel();
+            _cleanupTimer?.Cancel();
         }
 
         internal class CacheCleanup
         {
             public static readonly CacheCleanup Instance = new CacheCleanup();
+
+            private CacheCleanup()
+            {
+            }
         }
     }
 }
