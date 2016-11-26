@@ -15,12 +15,12 @@
   </ItemGroup>
   
   <ItemGroup>
-	<ProjectReference Include="..\Akka\Akka.csproj" />
-	<ProjectReference Include="..\Akka.Remote\Akka.Remote.csproj" />
+    <ProjectReference Include="..\Akka\Akka.csproj" />
+    <ProjectReference Include="..\Akka.Remote\Akka.Remote.csproj" />
     <ProjectReference Include="..\Akka.FSharp\Akka.FSharp.fsproj" />
-	<ProjectReference Include="..\Akka.TestKit\Akka.TestKit.csproj" />
-	<ProjectReference Include="..\Akka.Tests.Shared.Internals\Akka.Tests.Shared.Internals.csproj" />
-	<ProjectReference Include="..\..\contrib\testkits\Akka.TestKit.Xunit2\Akka.TestKit.Xunit2.csproj" />
+    <ProjectReference Include="..\Akka.TestKit\Akka.TestKit.csproj" />
+    <ProjectReference Include="..\Akka.Tests.Shared.Internals\Akka.Tests.Shared.Internals.csproj" />
+    <ProjectReference Include="..\..\contrib\testkits\Akka.TestKit.Xunit2\Akka.TestKit.Xunit2.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,9 +30,9 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20161123-03" />
     <PackageReference Include="xunit" Version="2.2.0-beta4-build3444" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0-beta4-build1194" />
-	<PackageReference Include="FsCheck" Version="0.9.4.0" />
-	<PackageReference Include="FsCheck.Xunit" Version="0.4.1.0" />
-	<PackageReference Include="FSharp.Core" Version="4.0.0.1" />
+    <PackageReference Include="FsCheck" Version="0.9.4.0" />
+    <PackageReference Include="FsCheck.Xunit" Version="0.4.1.0" />
+    <PackageReference Include="FSharp.Core" Version="4.0.0.1" />
     <PackageReference Include="FSharp.NET.Sdk" Version="1.0.0-alpha-*">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
