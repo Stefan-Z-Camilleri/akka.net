@@ -401,11 +401,14 @@ let createNugetPackages _ =
 
     let projects = !!   "src/**/Akka/Akka.csproj" ++
                         "src/**/Akka.Persistence/Akka.Persistence.csproj" ++
-                        "src/**/Akka.Persistence.Sql.Common/Akka.Persistence.Sql.Common.csproj" ++
+                        "src/**/Akka.Persistence.Query/Akka.Persistence.Query.csproj" ++
                         "src/**/Akka.Persistence.TestKit/Akka.Persistence.TestKit.csproj" ++
                         "src/**/Akka.Streams/Akka.Streams.csproj" ++
+                        "src/**/Akka.Streams.TestKit/Akka.Streams.TestKit.csproj" ++
                         "src/**/Akka.TestKit/Akka.TestKit.csproj" ++
-                        "src/**/Akka.TestKit.Xunit2/Akka.TestKit.Xunit2.csproj"
+                        "src/contrib/**/Akka.Persistence.Query.Sql/Akka.Persistence.Query.Sql.csproj" ++
+                        "src/contrib/**/Akka.Persistence.Sql.Common/Akka.Persistence.Sql.Common.csproj" ++
+                        "src/contrib/**/Akka.TestKit.Xunit2/Akka.TestKit.Xunit2.csproj"
 
     let runSingleProject project =
         DotNetCli.Pack
