@@ -48,11 +48,8 @@
       <Version>1.0.0-alpha-20161104-2</Version>
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="xunit.abstractions">
-      <Version>2.0.1</Version>
-    </PackageReference>
     <PackageReference Include="xunit.runner.utility">
-      <Version>2.1.0</Version>
+      <Version>2.2.0-beta4-build3444</Version>
     </PackageReference>
   </ItemGroup>
 
