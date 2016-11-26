@@ -265,8 +265,6 @@ Target "BuildRelease" DoNothing
 Target "RunTests" <| fun _ ->  
     mkdir testOutput
 
-    let framework = "net46"
-
     let testProjects =   !! "src/**/Akka.Tests/Akka.Tests.csproj" ++
                             "src/**/Akka.Persistence.Tests/Akka.Persistence.Tests.csproj" ++
                             "src/**/Akka.Persistence.TestKit.Tests/Akka.Persistence.TestKit.Tests.csproj" ++
@@ -277,8 +275,7 @@ Target "RunTests" <| fun _ ->
         DotNetCli.Test
             (fun p -> 
                 { p with
-                    Project = project
-                    Framework = framework })
+                    Project = project })
 
     testProjects |> Seq.iter (runSingleProject)
 
