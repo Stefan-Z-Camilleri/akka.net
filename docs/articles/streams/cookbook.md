@@ -15,12 +15,12 @@ open while reading the manual and look for examples demonstrating various stream
 as they appear in the main body of documentation.
 
 If you need a quick reference of the available processing stages used in the recipes see 
-[Overview of built-in stages and their semantics](builtinstages)
+[Overview of built-in stages and their semantics](builtinstages.md)
 
 #Working with Flows
 
 In this collection we show simple recipes that involve linear flows. The recipes in this section are rather
-general, more targeted recipes are available as separate sections ( [Buffers and working with rate](buffersandworkingwithrate), [Working with streaming IO](workingwithstreamingio)).
+general, more targeted recipes are available as separate sections ( [Buffers and working with rate](buffersandworkingwithrate.md), [Working with streaming IO](workingwithstreamingio.md)).
 
 ####Logging elements of a stream
 

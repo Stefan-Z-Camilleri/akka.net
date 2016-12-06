@@ -34,7 +34,7 @@ A description of a stream processing topology, defining the pathways through whi
 **Processing Stage**  
 The common name for all building blocks that build up a `Graph`. 
 Examples of a processing stage would be operations like `Select()`, `Where()`, custom `GraphStage's` and graph junctions like `Merge` or `Broadcast`. 
-For the full list of built-in processing stages see [Overview of built-in stages and their semantics](builtinstages)   
+For the full list of built-in processing stages see [Overview of built-in stages and their semantics](builtinstages.md)   
   
 When we talk about _asynchronous, non-blocking backpressure_ we mean that the processing stages available in Akka Streams 
 will not use blocking calls but asynchronous message passing to exchange messages between each other, 
@@ -210,7 +210,7 @@ The user of the library does not have to write any explicit back-pressure handli
 and dealt with automatically by all of the provided Akka Streams processing stages. It is possible however to add
 explicit buffer stages with overflow strategies that can influence the behaviour of the stream. This is especially important
 in complex processing graphs which may even contain loops (which *must* be treated with very special
-care, as explained in [Graph cycles, liveness and deadlocks](workingwithgraphs#graph-cycles-liveness-and-deadlocks)).
+care, as explained in [Graph cycles, liveness and deadlocks](workingwithgraphs.md#graph-cycles-liveness-and-deadlocks)).
 
 The back pressure protocol is defined in terms of the number of elements a downstream ``Subscriber`` is able to receive
 and buffer, referred to as ``demand``.
@@ -222,7 +222,7 @@ The Reactive Streams specification defines its protocol in terms of ``Publisher`
 These types are **not** meant to be user facing API, instead they serve as the low level building blocks for different Reactive Streams implementations.
 Akka Streams implements these concepts as ``Source``, ``Flow`` (referred to as ``Processor`` in Reactive Streams)
 and ``Sink`` without exposing the Reactive Streams interfaces directly.
-If you need to integrate with other Reactive Stream libraries read [Integrating with Reactive Streams](integration#integrating-with-reactive-streams).
+If you need to integrate with other Reactive Stream libraries read [Integrating with Reactive Streams](integration.md#integrating-with-reactive-streams).
 
 The mode in which Reactive Streams back-pressure works can be colloquially described as "dynamic push / pull mode",
 since it will switch between push and pull based back-pressure models depending on the downstream being able to cope
@@ -317,7 +317,7 @@ work on the tasks in parallel. It is important to note that asynchronous boundar
 flow where elements are passed asynchronously (as in other streaming libraries), but instead attributes always work
 by adding information to the flow graph that has been constructed up to this point:
 
-![AsyncBoundary](../images/asyncBoundary.png)  
+![AsyncBoundary](/images/asyncBoundary.png)  
 
 This means that everything that is inside the red bubble will be executed by one actor and everything outside of it
 by another. This scheme can be applied successively, always having one such boundary enclose the previous ones plus all
@@ -399,7 +399,7 @@ RunnableGraph<Tuple<TaskCompletionSource<int>, ICancelable, Task<int>>> r12 =
 
 >**Note**<br/>
 In Graphs it is possible to access the materialized value from inside the stream processing graph.
-For details see [Accessing the materialized value inside the Graph](workingwithgraphs#accessing-the-materialized-value-inside-the-graph).
+For details see [Accessing the materialized value inside the Graph](workingwithgraphs.md#accessing-the-materialized-value-inside-the-graph).
    
 
 #Stream ordering

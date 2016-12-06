@@ -4,14 +4,14 @@ title: Custom stream processing
 ---
 
 #Custom stream processing
-While the processing vocabulary of Akka Streams is quite rich (see the [Streams Cookbook](cookbook) for examples) it is sometimes necessary to define new transformation stages either because some functionality is missing from the stock operations, or for preformance reasons. In this part we show how to build custom processing stages and graph junctions of various kinds.
+While the processing vocabulary of Akka Streams is quite rich (see the [Streams Cookbook](cookbook.md) for examples) it is sometimes necessary to define new transformation stages either because some functionality is missing from the stock operations, or for preformance reasons. In this part we show how to build custom processing stages and graph junctions of various kinds.
 
 > **Note** <br>A custom graph stage should not be the first tool you reach for, defining graphs using flows and the graph DSL is in general easier and does to a larger extent protect you from mistakes that might be easy to make with a custom `GraphStage`
 
 ##Custom processing with GraphStage
 The `GraphStage` abstraction can be used to create arbitrary graph processing stages with any number of input or output ports. It is a counterpart of the `GraphDSL.Create()` method which creates new stream processing stages by composing others. Where `GraphStage` differs is that it creates a stage that is itself not divisible into smaller ones, and allows state to be maintained inside it in a safe way.
 
-As a first motivating example, we will build a new `Source` that will simply emit numbers from 1 until it is cancelled. To start, we need to define the "interface" of our stage, which is called shape in Akka Streams terminology (this is explained in more detail in the section [Modularity, Composition and Hierarchy](modularitycomposition)). This is how this looks like:
+As a first motivating example, we will build a new `Source` that will simply emit numbers from 1 until it is cancelled. To start, we need to define the "interface" of our stage, which is called shape in Akka Streams terminology (this is explained in more detail in the section [Modularity, Composition and Hierarchy](modularitycomposition.md)). This is how this looks like:
 
 ```csharp
 using Akka.Streams.Stage;
@@ -75,7 +75,7 @@ class NumbersSource : GraphStage<SourceShape<int>>
 }
 ```
 
-Instances of the above `GraphStage` are subclasses of `Graph<SourceShape<int>, NotUsed>` which means that they are already usable in many situations, but do not provide the DSL methods we usually have for other `Source`s. In order to convert this `Graph`to a proper `Source` we need to wrap it using `Source.FromGraph` (see [Modularity, Composition and Hierarchy](modularitycomposition) for more details about graphs and DSLs). Now we can use the source as any other built-in one:
+Instances of the above `GraphStage` are subclasses of `Graph<SourceShape<int>, NotUsed>` which means that they are already usable in many situations, but do not provide the DSL methods we usually have for other `Source`s. In order to convert this `Graph`to a proper `Source` we need to wrap it using `Source.FromGraph` (see [Modularity, Composition and Hierarchy](modularitycomposition.md) for more details about graphs and DSLs). Now we can use the source as any other built-in one:
 
 ```csharp
 // A GraphStage is a proper Graph, just like what GraphDSL.Create would return
@@ -111,7 +111,7 @@ Also, there are two query methods available for output ports:
 
 The relationship of the above operations, events and queries are summarized in the state machine below. Green shows the initial state while orange indicates the end state. If an operation is not listed for a state, then it is invalid to call it while the port is in that state. If an event is not listed for a state, then that event cannot happen in that state.
 
-![outport transitions1](../images/outport_transitions1.png)
+![outport transitions1](/images/outport_transitions1.png)
 
 The following operations are available for *input* ports:
 
@@ -134,7 +134,7 @@ Also, there are three query methods available for input ports:
 
 The relationship of the above operations, events and queries are summarized in the state machine below. Green shows the initial state while orange indicates the end state. If an operation is not listed for a state, then it is invalid to call it while the port is in that state. If an event is not listed for a state, then that event cannot happen in that state.
 
-![Inport transitions](../images/inport_transitions1.png)
+![Inport transitions](/images/inport_transitions1.png)
 
 Finally, there are two methods available for convenience to complete the stage and all of its ports:
 
@@ -159,11 +159,11 @@ Graph stages allows for custom linear processing stages through letting them hav
 
 Such a stage can be illustrated as a box with two flows as it is seen in the illustration below. Demand flowing upstream leading to elements flowing downstream.
 
-![graph stage conceptual](../images/graph_stage_conceptual1.png)
+![graph stage conceptual](/images/graph_stage_conceptual1.png)
 
 To illustrate these concepts we create a small `GraphStage` that implements the `Map` transformation.
 
-![graph stage map](../images/graph_stage_map1.png)
+![graph stage map](/images/graph_stage_map1.png)
 
 Map calls `Push(out)` from the `onPush` handler and it also calls `Pull()` from the `onPull` handler resulting in the conceptual wiring above, and fully expressed in code below:
 
@@ -201,7 +201,7 @@ Map is a typical example of a one-to-one transformation of a stream where demand
 
 To demonstrate a many-to-one stage we will implement filter. The conceptual wiring of `Filter` looks like this:
 
-![Graph stage filter](../images/graph_stage_filter1.png)
+![Graph stage filter](/images/graph_stage_filter1.png)
 
 As we see above, if the given predicate matches the current element we are propagating it downwards, otherwise we return the "ball" to our upstream so that we get the new element. This is achieved by modifying the map example by adding a conditional in the `onPush` handler and decide between a `Pull(in)` or `Push(out)` call (and of course not having a mapping f function).
 
@@ -245,7 +245,7 @@ class Filter<T> : GraphStage<FlowShape<T, T>>
 
 To complete the picture we define a one-to-many transformation as the next step. We chose a straightforward example stage that emits every upstream element twice downstream. The conceptual wiring of this stage looks like this:
 
-![Graph stage duplicate](../images/graph_stage_duplicate1.png)
+![Graph stage duplicate](/images/graph_stage_duplicate1.png)
 
 This is a stage that has state: an option with the last element it has seen indicating if it has duplicated this last element already or not. We must also make sure to emit the extra element if the upstream completes.
 
@@ -342,7 +342,7 @@ class Duplicator<T> : GraphStage<FlowShape<T, T>>
 
 Finally, to demonstrate all of the stages above, we put them together into a processing chain, which conceptually would correspond to the following structure:
 
-![Graph stage chain](../images/graph_stage_chain1.png)
+![Graph stage chain](/images/graph_stage_chain1.png)
 
 In code this is only a few lines, using the `Via` use our custom stages in a stream:
 
@@ -356,7 +356,7 @@ var resultTask = Source.From(new [] {1,2,3,4,5})
 
 If we attempt to draw the sequence of events, it shows that there is one "event token" in circulation in a potential chain of stages, just like our conceptual "railroad tracks" representation predicts.
 
-![Graph stage tracks](../images/graph_stage_tracks_11.png)
+![Graph stage tracks](/images/graph_stage_tracks_11.png)
 
 ###Completion
 
@@ -531,7 +531,7 @@ class FirstValue<T> : GraphStageWithMaterializedValue<FlowShape<T, T>, Task<T>>
 
 Stages can access the `Attributes` object created by the materializer. This contains all the applied (inherited) attributes applying to the stage, ordered from least specific (outermost) towards the most specific (innermost) attribute. It is the responsibility of the stage to decide how to reconcile this inheritance chain to a final effective decision.
 
-See [Modularity, Composition and Hierarchy](modularitycomposition) for an explanation on how attributes work.
+See [Modularity, Composition and Hierarchy](modularitycomposition.md) for an explanation on how attributes work.
 
 ###Rate decoupled graph stages
 
@@ -543,11 +543,11 @@ One of the important use-case for this is to build buffer-like entities, that al
 
 The next diagram illustrates the event sequence for a buffer with capacity of two elements in a setting where the downstream demand is slow to start and the buffer will fill up with upstream elements before any demand is seen from downstream.
 
-![Graph stage detached](../images/graph_stage_detached_tracks_11.png)
+![Graph stage detached](/images/graph_stage_detached_tracks_11.png)
 
 Another scenario would be where the demand from downstream starts coming in before any element is pushed into the buffer stage.
 
-![graph stage detached](../images/graph_stage_detached_tracks_21.png)
+![graph stage detached](/images/graph_stage_detached_tracks_21.png)
 
 The first difference we can notice is that our `Buffer` stage is automatically pulling its upstream on initialization. The buffer has demand for up to two elements without any downstream demand.
 

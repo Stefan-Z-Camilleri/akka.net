@@ -20,7 +20,7 @@ Graphs are built from simple Flows which serve as the linear connections within 
 which serve as fan-in and fan-out points for Flows. Thanks to the junctions having meaningful types based on their behaviour
 and making them explicit elements these elements should be rather straightforward to use.
 
-Akka Streams currently provide these junctions (for a detailed list see [Overview of built-in stages and their semantics](builtinstages)):
+Akka Streams currently provide these junctions (for a detailed list see [Overview of built-in stages and their semantics](builtinstages.md)):
 
 - **Fan-out**
  - ``Broadcast<T>`` – *(1 input, N outputs)* given an input element emits to each output
@@ -39,7 +39,7 @@ One of the goals of the GraphDSL DSL is to look similar to how one would draw a 
 simple to translate a design from whiteboard to code and be able to relate those two. Let's illustrate this by translating
 the below hand drawn graph into Akka Streams:
 
-![SimpleGraphExample](../images/simple-graph-example.png)
+![SimpleGraphExample](/images/simple-graph-example.png)
 
 Such graph is simple to translate to the Graph DSL since each linear element corresponds to a `Flow`,
 and each circle corresponds to either a `Junction` or a `Source` or `Sink` if it is beginning
@@ -82,7 +82,7 @@ is passed to it and return the inlets and outlets of the resulting copy so that 
 Another alternative is to pass existing graphs—of any shape—into the factory method that produces a
 new graph. The difference between these approaches is that importing using ``builder.Add(...)`` ignores the
 materialized value of the imported graph while importing via the factory method allows its inclusion;
-for more details see [Stream Materialization](basics#stream-materialization).
+for more details see [Stream Materialization](basics.md#stream-materialization).
 
 In the example below we prepare a graph that consists of two parallel streams,
 in which we re-use the same instance of `Flow`, yet it will properly be
@@ -509,7 +509,7 @@ public static IMessage FromBytes(ByteString bytes)
 
 In this way you could easily integrate any other serialization library that turns an object into a sequence of bytes.
 
-The other stage that we talked about is a little more involved since reversing a framing protocol means that any received chunk of bytes may correspond to zero or more messages. This is best implemented using a `GraphStage` (see also [Custom processing with GraphStage](customstreamprocessing#custom-processing-with-graphstage)).
+The other stage that we talked about is a little more involved since reversing a framing protocol means that any received chunk of bytes may correspond to zero or more messages. This is best implemented using a `GraphStage` (see also [Custom processing with GraphStage](customstreamprocessing.md#custom-processing-with-graphstage)).
 
 ```csharp
 public static ByteString AddLengthHeader(ByteString bytes, ByteOrder order)

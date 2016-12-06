@@ -37,7 +37,7 @@ using (var sys = ActorSystem.Create("Reactive-Tweets"))
 ```
 
 The `ActorMaterializer` can optionally take `ActorMaterializerSettings` which can be used to define
-materialization properties, such as default buffer sizes (see also [Buffers for asynchronous stages](buffersandworkingwithrate#buffers-for-asynchronous-stages)), the dispatcher to
+materialization properties, such as default buffer sizes (see also [Buffers for asynchronous stages](buffersandworkingwithrate.md#buffers-for-asynchronous-stages)), the dispatcher to
 be used by the pipeline etc. These can be overridden with ``WithAttributes`` on `Flow`, `Source`, `Sink` and `IGraph`.
 
 Let's assume we have a stream of tweets readily available. In Akka this is expressed as a `Source[Out, M]`:
@@ -49,7 +49,7 @@ Source<ITweet, NotUsed> tweetSource;
 Streams always start flowing from a `Source[Out,M1]` then can continue through `Flow[In,Out,M2]` elements or
 more advanced graph elements to finally be consumed by a `Sink[In,M3]` (ignore the type parameters ``M1``, ``M2``
 and ``M3`` for now, they are not relevant to the types of the elements produced/consumed by these classes – they are
-"materialized types", which we'll talk about [below](materialized-values)).
+"materialized types", which we'll talk about [below](#materialized-value)).
 
 The operations should look familiar to anyone who has used the .Net Collections library,
 however they operate on streams and not collections of data (which is a very important distinction, as some operations
@@ -61,7 +61,7 @@ Source<string, NotUsed> formattedRetweets = tweetSource
   .Select(FormatTweet);
 ```
 
-Finally in order to [materialize](basics#stream-materialization) and run the stream computation we need to attach
+Finally in order to [materialize](basics.md#stream-materialization) and run the stream computation we need to attach
 the Flow to a `Sink` that will get the Flow running. The simplest way to do this is to call
 ``RunWith(sink, mat)`` on a ``Source``. For convenience a number of common Sinks are predefined and collected as methods on
 the `Sink` [companion class](https://github.com/akkadotnet/akka.net/blob/dev/src/core/Akka.Streams/Dsl/Sink.cs).
@@ -151,15 +151,15 @@ Both `IGraph` and `IRunnableGraph` are *immutable, thread-safe, and freely share
 
 A graph can also have one of several other shapes, with one or more unconnected ports. Having unconnected ports
 expresses a graph that is a *partial graph*. Concepts around composing and nesting graphs in large structures are
-explained in detail in [Modularity, Composition and Hierarchy](modularitycomposition#basics-of-composition-and-modularity). It is also possible to wrap complex computation graphs as Flows, Sinks or Sources, which will be explained in detail in
-[Constructing Sources, Sinks and Flows from Partial Graphs](workingwithgraphs#constructing-sources-sinks-and-flows-from-partial-graphs).
+explained in detail in [Modularity, Composition and Hierarchy](modularitycomposition.md#basics-of-composition-and-modularity). It is also possible to wrap complex computation graphs as Flows, Sinks or Sources, which will be explained in detail in
+[Constructing Sources, Sinks and Flows from Partial Graphs](workingwithgraphs.md#constructing-sources-sinks-and-flows-from-partial-graphs).
 
 #Back-pressure in action
 
 One of the main advantages of Akka Streams is that they *always* propagate back-pressure information from stream Sinks
 (Subscribers) to their Sources (Publishers). It is not an optional feature, and is enabled at all times. To learn more
 about the back-pressure protocol used by Akka Streams and all other Reactive Streams compatible implementations read
-[Back-pressure explained](basics#back-pressure-explained).
+[Back-pressure explained](basics.md#back-pressure-explained).
 
 A typical problem applications (not using Akka Streams) like this often face is that they are unable to process the incoming data fast enough,
 either temporarily or by design, and will start buffering incoming data until there's no more space to buffer, resulting
@@ -238,7 +238,7 @@ var eveningTweetsCount = counterGraph.Run(mat);
 ```
 
 Many elements in Akka Streams provide materialized values which can be used for obtaining either results of computation or
-steering these elements which will be discussed in detail in [Stream Materialization](basics#stream-materialization). Summing up this section, now we know
+steering these elements which will be discussed in detail in [Stream Materialization](basics.md#stream-materialization). Summing up this section, now we know
 what happens behind the scenes when we run this one-liner, which is equivalent to the multi line version above:
 
 ```csharp

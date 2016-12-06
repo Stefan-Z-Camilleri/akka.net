@@ -313,25 +313,4 @@ Configuration settings can be defined in the configuration section with the abso
 
 It can be configured with the following properties:
 
-```hocon
-# Configuration for the SqlReadJournal
-akka.persistence.query.journal.sqlite  {
-  # Implementation class of the Sqlite SqlReadJournalProvider
-  class = "Akka.Persistence.Query.Sql.SqlReadJournalProvider"
-  
-  # Absolute path to the write journal plugin configuration entry that this 
-  # query journal will connect to. That must be a SqliteJournal.
-  # If undefined (or "") it will connect to the default journal as specified by the
-  # akka.persistence.journal.plugin property.
-  write-plugin = ""
-  
-  # The Sqlite write journal is notifying the query side as soon as things
-  # are persisted, but for efficiency reasons the query side retrieves the events 
-  # in batches that sometimes can be delayed up to the configured `refresh-interval`.
-  refresh-interval = 3s
-  
-  # How many events to fetch in one query (replay) and keep buffered until they
-  # are delivered downstreams.
-  max-buffer-size = 100
-}
-```
+[!code-json[Main](../../../src/contrib/persistence/Akka.Persistence.Query.Sql/reference.conf)]

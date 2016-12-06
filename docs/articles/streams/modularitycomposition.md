@@ -9,7 +9,7 @@ Akka Streams provide a uniform model of stream processing graphs, which allows f
 
 Every processing stage used in Akka Streams can be imagined as a "box" with input and output ports where elements to be processed arrive and leave the stage. In this view, a `Source` is nothing else than a "box" with a single output port, or, a `BidiFlow` is a "box" with exactly two input and two output ports. In the figure below we illustrate the most common used stages viewed as "boxes".
 
-![Composed Shapes](../images/compose_shapes.png)
+![Composed Shapes](/images/compose_shapes.png)
 
 The *linear* stages are `Source`, `Sink` and `Flow`, as these can be used to compose strict chains of processing stages.
 Fan-in and Fan-out stages have usually multiple input or multiple output ports, therefore they allow to build
@@ -28,7 +28,7 @@ to interact with. One good example is the ``Http`` server component, which is en
 The following figure demonstrates various composite stages, that contain various other type of stages internally, but
 hiding them behind a *shape* that looks like a `Source`, `Flow`, etc.
 
-![Composed composites](../images/compose_composites.png)
+![Composed composites](/images/compose_composites.png)
 
 One interesting example above is a `Flow` which is composed of a disconnected `Sink` and `Source`.
 This can be achieved by using the ``FromSinkAndSource()`` constructor method on `Flow` which takes the two parts as parameters.
@@ -42,7 +42,7 @@ be properly connected.
 These mechanics allow arbitrary nesting of modules. For example the following figure demonstrates a `RunnableGraph`
 that is built from a composite `Source` and a composite `Sink` (which in turn contains a composite `Flow`).
 
-![Compose nested flow](../images/compose_nested_flow.png)
+![Compose nested flow](/images/compose_nested_flow.png)
 
 The above diagram contains one more shape that we have not seen yet, which is called `RunnableGraph`. It turns
 out, that if we wire all exposed ports together, so that no more open ports remain, we get a module that is *closed*.
@@ -92,7 +92,7 @@ Once we have hidden the internals of our components, they act like any other bui
 we hide some of the internals of our composites, the result looks just like if any other predefine component has been
 used:
 
-![Compose nested flow opaque](../images/compose_nested_flow_opaque.png)
+![Compose nested flow opaque](/images/compose_nested_flow_opaque.png)
 
 If we look at usage of built-in components, and our custom components, there is no difference in usage as the code
 snippet below demonstrates.
@@ -115,7 +115,7 @@ operate on are uniform across all DSLs and fit together nicely.
 
 As a first example, let's look at a more complex layout:
 
-![Compose graph](../images/compose_graph.png)
+![Compose graph](/images/compose_graph.png)
 
 The diagram shows a `RunnableGraph` (remember, if there are no unwired ports, the graph is closed, and therefore
 can be materialized) that encapsulates a non-trivial stream processing network. It contains fan-in, fan-out stages,
@@ -176,7 +176,7 @@ the layout is flat, not modularized. We will modify our example, and create a re
 The way to do it is to use the ``Create()`` factory method on `GraphDSL`. If we remove the sources and sinks
 from the previous example, what remains is a partial graph:
 
-![Compose partial graph](../images/compose_graph_partial.png)
+![Compose partial graph](/images/compose_graph_partial.png)
 
 We can recreate a similar graph in code, using the DSL in a similar way than before:
 
@@ -205,7 +205,7 @@ matching built-in ones.
 The resulting graph is already a properly wrapped module, so there is no need to call `Named()` to encapsulate the graph, but
 it is a good practice to give names to modules to help debugging.
 
-![Compose graph shape](../images/compose_graph_shape.png)
+![Compose graph shape](/images/compose_graph_shape.png)
 
 Since our partial graph has the right shape, it can be already used in the simpler, linear DSL:
 
@@ -219,7 +219,7 @@ has a ``FromGraph()`` method that just adds the DSL to a `FlowShape`. There are 
 For convenience, it is also possible to skip the partial graph creation, and use one of the convenience creator methods.
 To demonstrate this, we will create the following graph:
 
-![Compose graph flow](../images/compose_graph_flow.png)
+![Compose graph flow](/images/compose_graph_flow.png)
 
 The code version of the above closed graph might look like this:
 
@@ -296,11 +296,11 @@ needs to return a different object that provides the necessary interaction capab
 Unlike actors though, each of the processing stages might provide a materialized value, so when we compose multiple
 stages or modules, we need to combine the materialized value as well (there are default rules which make this easier,
 for example `To()` and `Via()` takes care of the most common case of taking the materialized value to the left.
-See [Combining materialized values](basics#combining-materialized-values) for details). We demonstrate how this works by a code example and a diagram which graphically demonstrates what is happening.
+See [Combining materialized values](basics.md#combining-materialized-values) for details). We demonstrate how this works by a code example and a diagram which graphically demonstrates what is happening.
 
 The propagation of the individual materialized values from the enclosed modules towards the top will look like this:
 
-![Compose materialized](../images/compose_mat.png)
+![Compose materialized](/images/compose_mat.png)
 
 To implement the above, first, we create a composite `Source`, where the enclosed `Source` have a
 materialized type of `Task<NotUsed>`. By using the combiner function ``Keep.Left``, the resulting materialized
@@ -373,14 +373,14 @@ var runnableGraph = nestedSource.ToMaterialized(nestedSink, (completion, rest) =
 ```
 
 >**Note**<br/>
-The nested structure in the above example is not necessary for combining the materialized values, it just demonstrates how the two features work together. See [Combining materialized values](basics#combining-materialized-values) for further examples of combining materialized values without nesting and hierarchy involved.
+The nested structure in the above example is not necessary for combining the materialized values, it just demonstrates how the two features work together. See [Combining materialized values](basics.md#combining-materialized-values) for further examples of combining materialized values without nesting and hierarchy involved.
 
 #Attributes
 We have seen that we can use ``Named()`` to introduce a nesting level in the fluid DSL (and also explicit nesting by using
 ``Create()`` from :class:`GraphDSL`). Apart from having the effect of adding a nesting level, ``Named()`` is actually
 a shorthand for calling ``WithAttributes(Attributes.CreateName("someName"))``. Attributes provide a way to fine-tune certain
 aspects of the materialized running entity. For example buffer sizes for asynchronous stages can be controlled via
-attributes ([see](buffersandworkingwithrate#buffers-for-asynchronous-stages)). When it comes to hierarchic composition, attributes are inherited by nested modules, unless they override them with a custom value.
+attributes ([see](buffersandworkingwithrate.md#buffers-for-asynchronous-stages)). When it comes to hierarchic composition, attributes are inherited by nested modules, unless they override them with a custom value.
 
 The code below, a modification of an earlier example sets the ``InputBuffer`` attribute on certain modules, but not
 on others:
@@ -407,7 +407,7 @@ the same attribute explicitly set. ``nestedSource`` gets the default attributes 
 on the other hand has this attribute set, so it will be used by all nested modules. ``nestedFlow`` will inherit from ``nestedSink``
 except the ``Select`` stage which has again an explicitly provided attribute overriding the inherited one.
 
-![Composed Attributes](../images/compose_attributes.png)
+![Composed Attributes](/images/compose_attributes.png)
 
 This diagram illustrates the inheritance process for the example code (representing the materializer default attributes
 as the color *red*, the attributes set on ``nestedSink`` as *blue* and the attributes set on ``nestedFlow`` as *green*).

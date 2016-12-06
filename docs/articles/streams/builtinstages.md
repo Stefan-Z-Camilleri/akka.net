@@ -44,6 +44,17 @@ Stream a single object repeatedly
 
 **completes** never
 
+####Cycle
+
+Stream iterator in cycled manner. Internally new iterator is being created to cycle the one provided via argument meaning
+when original iterator runs out of elements process will start all over again from the beginning of the iterator
+provided by the evaluation of provided parameter. If method argument provides empty iterator stream will be terminated with
+exception.
+
+**emits** the next value returned from cycled iterator
+
+**completes** never
+
 ####Tick
 
 A periodical repetition of an arbitrary object. Delay of first tick is specified
@@ -137,6 +148,23 @@ Combine several sources, using a given strategy such as merge or concat, into on
 
 **completes** when all sources has completed
 
+####UnfoldResource
+
+Wrap any resource that can be opened, queried for next element (in a blocking way) and closed using three distinct functions into a source.
+
+**emits** when there is demand and read function returns value
+
+**completes**  when read function returns ``None``
+
+####UnfoldResourceAsync
+
+Wrap any resource that can be opened, queried for next element (in a blocking way) and closed using three distinct functions into a source.
+Functions return ``Task`` to achieve asynchronous processing
+
+**emits** when there is demand and ``Task`` from read function returns value
+
+**completes** when ``Task`` from read function returns ``None``
+
 ####Queue
 
 Materialize a ``SourceQueue`` onto which elements can be pushed for emitting from the source. The queue contains
@@ -158,6 +186,22 @@ Integration with Reactive Streams, materializes into a ``Reactive.Streams.ISubsc
 Integration with Reactive Streams, subscribes to a ``Reactive.Streams.IPublisher``.
 
 
+####ZipN
+
+Combine the elements of multiple streams into a stream of sequences.
+
+**emits** when all of the inputs has an element available
+
+**completes** when any upstream completes
+
+
+####ZipWithN
+
+Combine the elements of multiple streams into a stream of sequences using a combiner function.
+
+**emits** when all of the inputs has an element available
+
+**completes** when any upstream completes
 
 
 #Sink stages
@@ -885,6 +929,89 @@ merging. The maximum number of merged sources has to be specified.
 **completes** when upstream completes and all consumed substreams complete
 
 
+#Time aware stages
+
+Those stages operate taking time into consideration.
+
+####InitialTimeout
+
+If the first element has not passed through this stage before the provided timeout, the stream is failed
+with a ``TimeoutException``.
+
+**emits** when upstream emits an element
+
+**backpressures** when downstream backpressures
+
+**completes** when upstream completes or fails if timeout elapses before first element arrives
+
+**cancels** when downstream cancels
+
+####CompletionTimeout
+
+If the completion of the stream does not happen until the provided timeout, the stream is failed
+with a ``TimeoutException``.
+
+**emits** when upstream emits an element
+
+**backpressures** when downstream backpressures
+
+**completes** when upstream completes or fails if timeout elapses before upstream completes
+
+**cancels** when downstream cancels
+
+####IdleTimeout
+
+If the time between two processed elements exceeds the provided timeout, the stream is failed
+with a ``TimeoutException``. The timeout is checked periodically, so the resolution of the
+check is one period (equals to timeout value).
+
+**emits** when upstream emits an element
+
+**backpressures** when downstream backpressures
+
+**completes** when upstream completes or fails if timeout elapses between two emitted elements
+
+**cancels** when downstream cancels
+
+####BackpressureTimeout
+
+If the time between the emission of an element and the following downstream demand exceeds the provided timeout,
+the stream is failed with a ``TimeoutException``. The timeout is checked periodically, so the resolution of the
+check is one period (equals to timeout value).
+
+**emits** when upstream emits an element
+
+**backpressures** when downstream backpressures
+
+**completes** when upstream completes or fails if timeout elapses between element emission and downstream demand.
+
+**cancels** when downstream cancels
+
+####KeepAlive
+
+Injects additional (configured) elements if upstream does not emit for a configured amount of time.
+
+**emits** when upstream emits an element or if the upstream was idle for the configured period
+
+**backpressures** when downstream backpressures
+
+**completes** when upstream completes
+
+**cancels** when downstream cancels
+
+####InitialDelay
+
+Delays the initial element by the specified duration.
+
+**emits** when upstream emits an element if the initial delay is already elapsed
+
+**backpressures** when downstream backpressures or initial delay is not yet elapsed
+
+**completes** when upstream completes
+
+**cancels** when downstream cancels
+
+
 #Fan-in stages
 
 These stages take multiple streams as their input and provide a single output combining the elements from all of
@@ -954,6 +1081,24 @@ If materialized values needs to be collected ``prependMat`` is available.
 
 **completes** when all upstreams complete
 
+####OrElse
+
+If the primary source completes without emitting any elements, the elements from the secondary source
+are emitted. If the primary source emits any elements the secondary source is cancelled.
+
+Note that both sources are materialized directly and the secondary source is backpressured until it becomes
+the source of elements or is cancelled.
+
+Signal errors downstream, regardless which of the two sources emitted the error.
+
+**emits** when an element is available from first stream or first stream closed without emitting any elements and an element
+is available from the second stream
+
+**backpressures** when downstream backpressures
+
+**completes** the primary stream completes after emitting at least one element, when the primary stream completes
+without emitting and the secondary stream already has completed or when the secondary stream completes
+
 ####Interleave
 
 Emits a specifiable number of elements from the original source, then from the provided source and repeats. If one
@@ -1021,5 +1166,18 @@ The stage otherwise passes through elements unchanged.
 **emits** when input has an element available
 
 **backpressures** when output backpressures
+
+**completes** when upstream completes
+
+
+####Monitor
+
+Materializes to a ``FlowMonitor`` that monitors messages flowing through or completion of the stage. The stage otherwise
+passes through elements unchanged. Note that the ``FlowMonitor`` inserts a memory barrier every time it processes an
+event, and may therefore affect performance.
+
+**emits** when upstream emits an element
+
+**backpressures** when downstream **backpressures**
 
 **completes** when upstream completes
