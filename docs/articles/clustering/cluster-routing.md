@@ -79,7 +79,7 @@ Here are the essential options you will use to configure cluster-aware routers.
 - **`nr-of-instances`**: this is the maximum number of total routees that this router will route to.
 - **`max-nr-of-instances-per-node`**: this does not apply to `Group` routers.
 - **`routees.paths`**: the comma-separated path(s) of the routees on each node in the cluster.
-    + This setting can use what's called a *wildcard* path, meaning we don't care about the name of the actor in the `*` position. e.g. [in the Webcrawler sample,](https://github.com/petabridge/akkadotnet-code-samples/blob/master/Cluster.WebCrawler/src/WebCrawler.Service/App.config#L38) as long as the actor being deployed is named `coordinators` and the grandparent is named `api`, then this deployment configuration can be safely reused. You can write [`ActorSelection`s](../concepts/addressing#summary-actorof-vs-actorselection-) using wildcard paths also!
+    + This setting can use what's called a *wildcard* path, meaning we don't care about the name of the actor in the `*` position. e.g. [in the Webcrawler sample,](https://github.com/petabridge/akkadotnet-code-samples/blob/master/Cluster.WebCrawler/src/WebCrawler.Service/App.config#L38) as long as the actor being deployed is named `coordinators` and the grandparent is named `api`, then this deployment configuration can be safely reused. You can write [`ActorSelection`s](/concepts/addressing.md#summary-actorof-vs-actorselection-) using wildcard paths also!
     + You do *not* need to specify `/user` at the start of each path. It is implied.
 - **`use-role`**: the `Group` router will only route to routees at the specified `paths` on nodes marked with the given role. Can only specify one role here.
 

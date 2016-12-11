@@ -11,7 +11,7 @@ Akka.NET uses the "Home Depot" extensibility model - the base [Akka NuGet packag
 ## Akka.Remote's Capabilities
 Akka.Remote introduces the following capabilities to Akka.NET applications:
 
-1. **Location transparency with RemoteActorRef** - write code that looks like it's communicating with local actors, but with just a few configuration settings your actors can begin communicating with actors hosted in remote processes in a way that's fully [location transparent](../concepts/location-transparency) to your code.
+1. **Location transparency with RemoteActorRef** - write code that looks like it's communicating with local actors, but with just a few configuration settings your actors can begin communicating with actors hosted in remote processes in a way that's fully [location transparent](/concepts/location-transparency.md) to your code.
 1. **Remote addressing** - Akka.Remote extends the `Address` and `ActorPath` components of Akka.NET to also now include information about how to connect to remote processes via `ActorSelection`.
 1. **Remote messaging** - send messages, *transparently*, to actors running in remote `ActorSystem`s elsewhere on the network.
 1. **Remote deployment** - remotely deploy actors via the `ActorOf` method onto remote `ActorSystem` instances, anywhere on the network! The location of your actors on the network becomes a deployment detail in Akka.Remote.
@@ -76,7 +76,7 @@ First you need to install the Akka.Remote NuGet package, which you can do like t
 
 	PS> Install-Package Akka.Remote
 
-Next, you'll need to enable the `RemoteActorRefProvider` inside [HOCON configuration](../concepts/configuration) and bind your transport to an accessible IP address and port combination. Here's an example:
+Next, you'll need to enable the `RemoteActorRefProvider` inside [HOCON configuration](/concepts/configuration.md) and bind your transport to an accessible IP address and port combination. Here's an example:
 
 ```xml
 akka {
@@ -177,7 +177,7 @@ When you want to connect to a remote `ActorSystem`, two important changes occur 
 1. **The protocol gets augmented with the protocol of the network transport** - so in this case, since we're using the Helios TCP transport the protocol for communicating with all remote actors in our `ActorSystem` changes from `akka://` to `akka.tcp://`. When you deploy an actor remotely or send a message to a remote actor via `ActorSelection`, specifying this protocol is what tells your local `ActorSystem` how to deliver this message to the remote one!
 2. **The address gets populated with the inbound endpoint on the transport** - `localhost:9001` in this case. This lets your local system know how to attempt to establish an *outbound endpoint* to the remote `ActorSystem`.
 
-> NOTE: for more information about addressing in Akka.NET, see [Actor References, Paths and Addresses](../concepts/addressing)
+> NOTE: for more information about addressing in Akka.NET, see [Actor References, Paths and Addresses](/concepts/addressing.md)
 
 Here's how we actually use a remote `Address` to form an association between two remote `ActorSystem` instances.
 

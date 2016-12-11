@@ -66,7 +66,7 @@ The `Sender`, an `IActorRef`, is actually an `Akka.Remote.RemoteActorRef`! But t
 
 In essence, minus the initial `ActorSelection` used to start remote communication between the two `ActorSystem`s, any actor in either `ActorSystem` could reply to eachother without knowing or caring that they exist elsewhere on the network. That's pretty cool! 
 ## `RemoteActorRef` and Location Transparency
-What `RemoteActorRef` gives us is a magical property called [Location Transparency](../concepts/location-transparency).
+What `RemoteActorRef` gives us is a magical property called [Location Transparency](/concepts/location-transparency.md).
 
 > What location transparency means is that whenever you send a message to an actor, you don't need to know where they are within an actor system, which might span hundreds of computers. You just have to know that actors' address.
 

@@ -9,7 +9,7 @@ Programmers often fall victim to the [fallacies of distributed computing](http:/
 Akka.Remote gives us the ability to handle and respond to network failures by extending [actor life cycle monitoring (DeathWatch)](../working-with-actors/Actor%20lifecycle#lifecycle-monitoring-aka-deathwatch) to work across the network.
 
 ## Syntax
-Setting up DeathWatch is done the same way locally as it's done over the network (because, [Location Transparency](../concepts/location-transparency).)
+Setting up DeathWatch is done the same way locally as it's done over the network (because, [Location Transparency](/concepts/location-transparency.md).)
 
 ```csharp
 public class MyActor : ReceiveActor{

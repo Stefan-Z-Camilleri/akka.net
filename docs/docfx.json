@@ -60,6 +60,12 @@
         ]
       }
     ],
+    "globalMetadata": {
+      "_appTitle": "Akka.NET Documentation",
+      "_appLogoPath": "/images/akkalogo.png",
+      "_appFaviconPath": "/images/favicon.ico",
+      "_enableSearch": true
+    },
     "dest": "_site",
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],

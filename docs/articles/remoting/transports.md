@@ -36,7 +36,7 @@ Out of the box Akka.NET uses a socket-based transport built on top of the [Helio
 
 > NOTE: Helios supports both TCP and UDP, but currently only TCP support is included within Akka.NET. TCP is what most Akka.Remote and Akka.Cluster users use.
 
-To enable the Helios TCP transport, we need to add a section for it inside our `remote` section in [HOCON configuration](../concepts/configuration):
+To enable the Helios TCP transport, we need to add a section for it inside our `remote` section in [HOCON configuration](/concepts/configuration.md):
 
 ```xml
 akka {  
