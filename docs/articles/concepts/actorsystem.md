@@ -40,7 +40,7 @@ In some cases it is unavoidable to do blocking operations, i.e. to put a thread 
 
 The non-exhaustive list of adequate solutions to the “blocking problem” includes the following suggestions:
 
-* Do the blocking call within an actor (or a set of actors managed by a [router](Routing)), making sure to configure a thread pool which is either dedicated for this purpose or sufficiently sized.
+* Do the blocking call within an actor (or a set of actors managed by a [router](actors/routers.md)), making sure to configure a thread pool which is either dedicated for this purpose or sufficiently sized.
 * Do the blocking call within a Future, ensuring an upper bound on the number of such calls at any point in time (submitting an unbounded number of tasks of this nature will exhaust your memory or thread limits).
 * Do the blocking call within a Future, providing a thread pool with an upper limit on the number of threads which is appropriate for the hardware on which the application runs.
 * Dedicate a single thread to manage a set of blocking resources (e.g. a NIO selector driving multiple channels) and dispatch events as they occur as actor messages.

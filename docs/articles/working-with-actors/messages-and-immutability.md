@@ -11,11 +11,11 @@ public class ImmutableMessage
 {
     public ImmutableMessage(int sequenceNumber, List<string> values)
     {
-        this.SequenceNumber = sequenceNumber;
-        this.Values = values.AsReadOnly();
+        SequenceNumber = sequenceNumber;
+        Values = values.AsReadOnly();
     }
 
-    public int SequenceNumber { get; private set; }
-    public IReadOnlyCollection<string> Values { get; private set; }
+    public int SequenceNumber { get; }
+    public IReadOnlyCollection<string> Values { get; }
 }
 ```

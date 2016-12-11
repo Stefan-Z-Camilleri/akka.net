@@ -4,7 +4,7 @@ title: Akka cluster distributed Pub/Sub
 ---
 # Distributed publish/subscribe
 
-While default event bus have some great use cases, it's limiting when it comes to communication outside of actor system's scope. One of the features [Akka.Cluster.Tools](cluster-tools.md) offers, is the ability to send message to all of the subscribers without knowing their nodes location.
+While default event bus have some great use cases, it's limiting when it comes to communication outside of actor system's scope. One of the features Akka.Cluster.Tools offers, is the ability to send message to all of the subscribers without knowing their nodes location.
 
 > At the present moment (<= v1.0.6) this feature doesn't play well with default Akka.NET serializer. Please use alternative serializers like Akka.Serialization.Wire for the time being.
 
