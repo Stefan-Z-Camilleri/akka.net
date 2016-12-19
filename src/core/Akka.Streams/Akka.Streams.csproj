@@ -1,5 +1,4 @@
 ﻿<Project ToolsVersion="15.0" Sdk="Microsoft.NET.Sdk">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
   <PropertyGroup>
     <Description>Reactive stream support for Akka.NET</Description>
     <Copyright>Copyright © 2013-2016 Akka.NET Team</Copyright>
