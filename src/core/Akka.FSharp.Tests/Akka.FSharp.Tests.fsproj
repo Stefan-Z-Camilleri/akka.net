@@ -1,12 +1,10 @@
-﻿<Project ToolsVersion="15.0">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
-
+﻿<Project ToolsVersion="15.0" Sdk="FSharp.NET.Sdk;Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net46</TargetFramework>
-	<RuntimeIdentifier>win7-x64</RuntimeIdentifier>
-	<AssemblyTitle>Akka.FSharp.Tests</AssemblyTitle>
-	<AssemblyName>Akka.FSharp.Tests</AssemblyName>
+    <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <AssemblyTitle>Akka.FSharp.Tests</AssemblyTitle>
+    <AssemblyName>Akka.FSharp.Tests</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,18 +22,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Sdk" Version="1.0.0-alpha-20161104-2">
+    <PackageReference Include="FSharp.NET.Sdk" Version="1.0.0-beta-*">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20161123-03" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20161216-01" />
     <PackageReference Include="xunit" Version="2.2.0-beta4-build3444" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0-beta4-build1194" />
     <PackageReference Include="FsCheck" Version="0.9.4.0" />
     <PackageReference Include="FsCheck.Xunit" Version="0.4.1.0" />
     <PackageReference Include="FSharp.Core" Version="4.0.0.1" />
-    <PackageReference Include="FSharp.NET.Sdk" Version="1.0.0-alpha-*">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
   </ItemGroup>
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
@@ -47,7 +42,4 @@
       <Version>1.0.0-preview2-020000</Version>
     </DotNetCliToolReference>
   </ItemGroup>
-
-  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
-
 </Project>

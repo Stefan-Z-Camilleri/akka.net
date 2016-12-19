@@ -1,5 +1,4 @@
-﻿<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+﻿<Project ToolsVersion="15.0" Sdk="Microsoft.NET.Sdk">
   
   <PropertyGroup>
     <Description>Helper classes for combining the Akka.Remote.TestKit with Akka.Cluster</Description>
@@ -41,10 +40,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Sdk">
-      <Version>1.0.0-alpha-20161104-2</Version>
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
     <PackageReference Include="NETStandard.Library">
       <Version>1.6.1</Version>
     </PackageReference>
@@ -61,6 +56,4 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
   </PropertyGroup>
-  
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

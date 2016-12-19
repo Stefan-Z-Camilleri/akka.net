@@ -1,18 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" />
+﻿<Project ToolsVersion="15.0" Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>Testkit for Persistence actor support for Akka.NET</Description>
     <Copyright>Copyright © 2013-2016 Akka.NET Team</Copyright>
     <AssemblyTitle>Akka.Persistence.TestKit</AssemblyTitle>
     <VersionPrefix>1.2.0</VersionPrefix>
-    <TargetFrameworks>net45;netcoreapp1.0</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard1.4</TargetFrameworks>
     <AssemblyName>Akka.Persistence.TestKit</AssemblyName>
     <PackageTags>akka;actors;actor model;Akka;concurrency;persistence;eventsource;testkit</PackageTags>
     <PackageIconUrl>http://getakka.net/images/AkkaNetLogo.Normal.png</PackageIconUrl>
     <PackageProjectUrl>https://github.com/akkadotnet/akka.net</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/akkadotnet/akka.net/blob/master/LICENSE</PackageLicenseUrl>
-    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);portable-net45+win8</PackageTargetFallback>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.4' ">$(PackageTargetFallback);portable-net45+win8</PackageTargetFallback>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
     <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -29,32 +27,22 @@
     <ProjectReference Include="..\Akka.Persistence\Akka.Persistence.csproj" />
     <ProjectReference Include="..\..\contrib\testkits\Akka.TestKit.Xunit2\Akka.TestKit.Xunit2.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Sdk">
-      <Version>1.0.0-alpha-20161104-2</Version>
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="NETStandard.Library">
-      <Version>1.6.1</Version>
-    </PackageReference>
-  </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
-    <PackageReference Include="Microsoft.NETCore.App">
-      <Version>1.0.0</Version>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
+    <PackageReference Include="NETStandard.Library">
+      <Version>1.6.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.Portable.Compatibility">
       <Version>1.0.1</Version>
     </PackageReference>
   </ItemGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DefineConstants>$(DefineConstants);RELEASE</DefineConstants>
   </PropertyGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
