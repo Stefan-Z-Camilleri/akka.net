@@ -4,7 +4,7 @@
     <Copyright>Copyright © 2013-2016 Akka.NET Team</Copyright>
     <AssemblyTitle>Akka.TestKit</AssemblyTitle>
     <VersionPrefix>1.2.0</VersionPrefix>
-    <TargetFrameworks>net45;netstandard1.4</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard1.6</TargetFrameworks>
     <AssemblyName>Akka.TestKit</AssemblyName>
     <PackageTags>akka;actors;actor model;Akka;concurrency</PackageTags>
     <PackageIconUrl>http://getakka.net/images/AkkaNetLogo.Normal.png</PackageIconUrl>
@@ -28,7 +28,7 @@
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.4' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
     <PackageReference Include="NETStandard.Library">
       <Version>1.6.1</Version>
     </PackageReference>

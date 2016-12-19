@@ -4,7 +4,7 @@
     <Copyright>Copyright © 2013-2016 Akka.NET Team</Copyright>
     <AssemblyTitle>Akka.TestKit.Xunit2</AssemblyTitle>
     <VersionPrefix>1.2.0</VersionPrefix>
-    <TargetFrameworks>net45;netstandard1.4</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard1.6</TargetFrameworks>
     <AssemblyName>Akka.TestKit.Xunit2</AssemblyName>
     <PackageTags>akka;actors;actor model;Akka;concurrency;xUnit</PackageTags>
     <PackageIconUrl>http://getakka.net/images/AkkaNetLogo.Normal.png</PackageIconUrl>
