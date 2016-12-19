@@ -10,6 +10,7 @@ open Fake.FileUtils
 open Fake.TaskRunnerHelper
 open Fake.ProcessHelper
 open Fake.DotNetCli
+open Fake.EnvironmentHelper
 
 cd __SOURCE_DIRECTORY__
 
@@ -127,18 +128,59 @@ Target "AssemblyInfo" <| fun _ ->
 // Build the solution
 
 Target "Build" <| fun _ ->
-    let projects = !! "src/core/**/*.csproj" ++
-                      "src/contrib/cluster/**/*.csproj" ++
-                      "src/contrib/persistence/**/*.csproj"
+    // temporary disable on Unix
+    if (isUnix) then
+        let projects = !!   "src/**/Akka/Akka.csproj" ++
+                            "src/**/Akka.Persistence/Akka.Persistence.csproj" ++
+                            "src/**/Akka.Persistence.Query/Akka.Persistence.Query.csproj" ++
+                            "src/**/Akka.Persistence.TestKit/Akka.Persistence.TestKit.csproj" ++
+                            "src/**/Akka.Streams/Akka.Streams.csproj" ++
+                            "src/**/Akka.Streams.TestKit/Akka.Streams.TestKit.csproj" ++
+                            "src/**/Akka.TestKit/Akka.TestKit.csproj" ++
+                            "src/contrib/**/Akka.Persistence.Query.Sql/Akka.Persistence.Query.Sql.csproj" ++
+                            "src/contrib/**/Akka.Persistence.Sql.Common/Akka.Persistence.Sql.Common.csproj" ++
+                            "src/contrib/**/Akka.TestKit.Xunit2/Akka.TestKit.Xunit2.csproj"
 
-    let runSingleProject project =
-        DotNetCli.Build
-            (fun p -> 
-                { p with
-                    Project = project
-                    Configuration = configuration})
+        let runSingleProject project =
+            DotNetCli.Build
+                (fun p -> 
+                    { p with
+                        Project = project
+                        Configuration = configuration
+                        Framework = "netstandard1.6" })
 
-    projects |> Seq.iter (runSingleProject)
+        projects |> Seq.iter (runSingleProject)
+
+        let testProjects =   !! "src/**/Akka.Tests/Akka.Tests.csproj" ++
+                                "src/**/Akka.Persistence.Tests/Akka.Persistence.Tests.csproj" ++
+                                "src/**/Akka.Persistence.TestKit.Tests/Akka.Persistence.TestKit.Tests.csproj" ++
+                                "src/**/Akka.Streams.Tests/Akka.Streams.Tests.csproj" ++
+                                "src/**/Akka.TestKit.Tests/Akka.TestKit.Tests.csproj"
+
+        let runTestProject project =
+            DotNetCli.Build
+                (fun p -> 
+                    { p with
+                        Project = project
+                        Configuration = configuration
+                        Framework = "netcoreapp1.0" })
+
+        testProjects |> Seq.iter (runTestProject)
+
+    else
+        let projects = !! "src/core/**/*.csproj" ++
+                        "src/contrib/cluster/**/*.csproj" ++
+                        "src/contrib/persistence/**/*.csproj" -- 
+                        "src/**/*.Tests.csproj"
+
+        let runSingleProject project =
+            DotNetCli.Build
+                (fun p -> 
+                    { p with
+                        Project = project
+                        Configuration = configuration})
+
+        projects |> Seq.iter (runSingleProject)
 
 //--------------------------------------------------------------------------------
 // Build the docs
@@ -264,10 +306,12 @@ Target "BuildRelease" DoNothing
 
 Target "RunTests" <| fun _ ->  
     mkdir testOutput
+    let testFramework = if isUnix then "netcoreapp1.0" else ""
 
     let testProjects =   !! "src/**/Akka.Tests/Akka.Tests.csproj" ++
                             "src/**/Akka.Persistence.Tests/Akka.Persistence.Tests.csproj" ++
                             "src/**/Akka.Persistence.TestKit.Tests/Akka.Persistence.TestKit.Tests.csproj" ++
+                            "src/**/Akka.Streams.Tests/Akka.Streams.Tests.csproj" ++
                             "src/**/Akka.TestKit.Tests/Akka.TestKit.Tests.csproj"
 
     let runSingleProject project =
@@ -275,7 +319,8 @@ Target "RunTests" <| fun _ ->
         DotNetCli.Test
             (fun p -> 
                 { p with
-                    Project = project })
+                    Project = project
+                    Framework = testFramework })
 
     testProjects |> Seq.iter (runSingleProject)
 

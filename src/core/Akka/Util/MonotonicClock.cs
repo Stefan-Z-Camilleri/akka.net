@@ -16,9 +16,6 @@ namespace Akka.Util
     {
         private static readonly Stopwatch Stopwatch = Stopwatch.StartNew();
 
-        [DllImport("kernel32")]
-        private static extern ulong GetTickCount64();
-
         private const int TicksInMillisecond = 10000;
 
         private const long NanosPerTick = 100;
@@ -39,9 +36,8 @@ namespace Akka.Util
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static long GetMilliseconds()
         {
-            return RuntimeDetector.IsMono
-                ? Stopwatch.ElapsedMilliseconds
-                : (long)GetTickCount64();
+            return Stopwatch.ElapsedMilliseconds;
+
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

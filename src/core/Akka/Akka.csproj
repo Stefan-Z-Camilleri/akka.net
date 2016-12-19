@@ -5,6 +5,7 @@
     <Copyright>Copyright © 2013-2016 Akka.NET Team</Copyright>
     <AssemblyTitle>Akka</AssemblyTitle>
     <VersionPrefix>1.2.0</VersionPrefix>
+    <Authors>Akka.NET Team</Authors>
     <TargetFrameworks>net45;netstandard1.6</TargetFrameworks>
     <AssemblyName>Akka</AssemblyName>
     <PackageTags>akka;actors;actor model;Akka;concurrency</PackageTags>

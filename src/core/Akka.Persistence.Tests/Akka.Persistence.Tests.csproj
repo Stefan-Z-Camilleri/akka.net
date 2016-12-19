@@ -1,8 +1,9 @@
 <Project ToolsVersion="15.0" Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net46;netcoreapp1.0</TargetFrameworks>
-	  <RuntimeIdentifier>win7-x64</RuntimeIdentifier>
+    <TargetFrameworks>net451;netcoreapp1.0</TargetFrameworks>
+	  <RuntimeIdentifiers>win7-x64;win7-x86;osx.10.10-x64;osx.10.11-x64;ubuntu.14.04-x64;ubuntu.16.04-x64;centos.7-x64;rhel.7.2-x64;debian.8-x64;fedora.23-x64;opensuse.13.2-x64</RuntimeIdentifiers>
+    <RuntimeIdentifier Condition=" '$(TargetFramework)' == 'net451' ">win7-x64</RuntimeIdentifier>
     <AssemblyName>Akka.Persistence.Tests</AssemblyName>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);portable-net45+win8</PackageTargetFallback>
     <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
@@ -26,7 +27,7 @@
     <ProjectReference Include="..\..\contrib\testkits\Akka.TestKit.Xunit2\Akka.TestKit.Xunit2.csproj" />
     <ProjectReference Include="..\Akka.Tests.Shared.Internals\Akka.Tests.Shared.Internals.csproj" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <ProjectReference Include="..\Akka.Remote\Akka.Remote.csproj" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
@@ -53,13 +54,13 @@
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
     <PackageReference Include="Microsoft.NETCore.App">
-      <Version>1.0.3</Version>
+      <Version>1.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.Portable.Compatibility">
       <Version>1.0.1</Version>
     </PackageReference>
   </ItemGroup>
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <DefineConstants>$(DefineConstants);SERIALIZABLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
