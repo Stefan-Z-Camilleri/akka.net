@@ -68,11 +68,9 @@ let msdeployPath = "C:\Program Files (x86)\IIS\Microsoft Web Deploy V3\msdeploy.
 // Restore packages
 
 Target "RestorePackages" (fun _ -> 
-    let projects = !! "src/core/**/*.csproj" ++
-                      "src/contrib/cluster/**/*.csproj" ++
-                      "src/contrib/persistence/**/*.csproj"
+    let solutions = !! "src/*.sln"
 
-    let runSingleProject project =
+    let runSingleSolution project =
         DotNetCli.Restore
             (fun p -> 
                 { p with
@@ -80,7 +78,7 @@ Target "RestorePackages" (fun _ ->
                     NoCache = false })
 
 
-    projects |> Seq.iter (runSingleProject)
+    solutions |> Seq.iter (runSingleSolution)
 )
 
 //--------------------------------------------------------------------------------
@@ -222,42 +220,6 @@ Target "AzureDocsDeploy" (fun _ ->
 )
 
 Target "PublishDocs" DoNothing
-
-//--------------------------------------------------------------------------------
-// Build the SourceBrowser docs
-//--------------------------------------------------------------------------------
-Target "GenerateSourceBrowser" <| (fun _ ->
-    DeleteDir sourceBrowserDocsDir
-
-    let htmlGeneratorPath = "src/packages/Microsoft.SourceBrowser/tools/HtmlGenerator.exe"
-    let arguments = sprintf "/out:%s %s" sourceBrowserDocsDir "src/Akka.sln"
-    printfn "Using SourceBrowser: %s %s" htmlGeneratorPath arguments
-    
-    let result = ExecProcess(fun info -> 
-        info.FileName <- htmlGeneratorPath
-        info.Arguments <- arguments) (System.TimeSpan.FromMinutes 20.0)
-    
-    if result <> 0 then failwithf "SourceBrowser failed. %s %s" htmlGeneratorPath arguments
-)
-
-//--------------------------------------------------------------------------------
-// Publish the SourceBrowser docs
-//--------------------------------------------------------------------------------
-Target "PublishSourceBrowser" <| (fun _ ->
-    let canPublish = hasBuildParam "publishsettings"
-    if (canPublish) then
-        let sourceBrowserPublishSettingsPath = getBuildParam "publishsettings"
-        let arguments = sprintf "-verb:sync -source:contentPath=\"%s\" -dest:contentPath=sourcebrowser,publishSettings=\"%s\"" (Path.GetFullPath sourceBrowserDocsDir) sourceBrowserPublishSettingsPath
-        printfn "Using MSDeploy: %s %s" msdeployPath arguments
-    
-        let result = ExecProcess(fun info -> 
-            info.FileName <- msdeployPath
-            info.Arguments <- arguments) (System.TimeSpan.FromMinutes 30.0) //takes a long time to upload
-    
-        if result <> 0 then failwithf "MSDeploy failed. %s %s" msdeployPath arguments
-    else
-        printfn "Missing required parameter to publish SourceBrowser docs. Run build HelpSourceBrowserDocs to find out!"
-)
 
 //--------------------------------------------------------------------------------
 // Copy the build output to bin directory
@@ -444,16 +406,20 @@ let createNugetPackages _ =
     ensureDirectory nugetDir
     let outputPath = __SOURCE_DIRECTORY__ + @"\" + nugetDir
 
-    let projects = !!   "src/**/Akka/Akka.csproj" ++
-                        "src/**/Akka.Persistence/Akka.Persistence.csproj" ++
-                        "src/**/Akka.Persistence.Query/Akka.Persistence.Query.csproj" ++
-                        "src/**/Akka.Persistence.TestKit/Akka.Persistence.TestKit.csproj" ++
-                        "src/**/Akka.Streams/Akka.Streams.csproj" ++
-                        "src/**/Akka.Streams.TestKit/Akka.Streams.TestKit.csproj" ++
-                        "src/**/Akka.TestKit/Akka.TestKit.csproj" ++
-                        "src/contrib/**/Akka.Persistence.Query.Sql/Akka.Persistence.Query.Sql.csproj" ++
-                        "src/contrib/**/Akka.Persistence.Sql.Common/Akka.Persistence.Sql.Common.csproj" ++
-                        "src/contrib/**/Akka.TestKit.Xunit2/Akka.TestKit.Xunit2.csproj"
+    let projects = !!   "src/**/Akka.csproj" ++
+                        "src/**/Akka.Cluster.csproj" ++
+                        "src/**/Akka.Cluster.TestKit.csproj" ++
+                        "src/**/Akka.Persistence.csproj" ++
+                        "src/**/Akka.Persistence.Query.csproj" ++
+                        "src/**/Akka.Persistence.TestKit.csproj" ++
+                        "src/**/Akka.Remote.csproj" ++
+                        "src/**/Akka.Remote.TestKit.csproj" ++
+                        "src/**/Akka.Streams.csproj" ++
+                        "src/**/Akka.Streams.TestKit.csproj" ++
+                        "src/**/Akka.TestKit.csproj" ++
+                        "src/contrib/**/Akka.Persistence.Query.Sql.csproj" ++
+                        "src/contrib/**/Akka.Persistence.Sql.Common.csproj" ++
+                        "src/contrib/**/Akka.TestKit.Xunit2.csproj"
 
     let runSingleProject project =
         DotNetCli.Pack
@@ -462,6 +428,7 @@ let createNugetPackages _ =
                     Project = project
                     Configuration = configuration
                     VersionSuffix = versionSuffix
+                    AdditionalArgs = ["--include-symbols"]
                     OutputPath = outputPath })
 
     projects |> Seq.iter (runSingleProject)
@@ -622,21 +589,6 @@ Target "HelpDocs" <| fun _ ->
       ""]
 
 
-Target "HelpSourceBrowserDocs" <| fun _ ->
-    List.iter printfn [
-      "usage: "
-      "build GenerateSourceBrowser"
-      "Just generates the SourceBrowser docs for Akka.NET locally. Does not attempt to publish."
-      ""
-      "build PublishSourceBrowser publishsettings=<filePath> "
-      ""
-      "Arguments for PublishSourceBrowser target:"
-      "   publishsettings=<filePath> Publish settings file."
-      ""
-      "In order to publish documentation all of these values must be provided."
-      ""]
-
-
 Target "HelpMultiNodeTests" <| fun _ ->
     List.iter printfn [
       "usage: "
@@ -670,9 +622,6 @@ Target "HelpMultiNodeTests" <| fun _ ->
 
 //docs dependencies
 "BuildRelease" ==> "Docs" ==> "AzureDocsDeploy" ==> "PublishDocs"
-
-// SourceBrowser dependencies
-"BuildRelease" ==> "GenerateSourceBrowser" ==> "PublishSourceBrowser"
 
 Target "All" DoNothing
 "BuildRelease" ==> "All"

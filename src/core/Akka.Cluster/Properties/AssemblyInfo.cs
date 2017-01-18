@@ -5,18 +5,12 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Akka.Cluster")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyProduct("Akka.Cluster")]
-[assembly: AssemblyCulture("")]
 [assembly: InternalsVisibleTo("Akka.Cluster.Tests")]
 [assembly: InternalsVisibleTo("Akka.Cluster.Tests.MultiNode")]
 [assembly: InternalsVisibleTo("Akka.Cluster.TestKit")]
